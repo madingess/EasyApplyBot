@@ -33,6 +33,9 @@ class LinkedinEasyApply:
         self.industry = parameters.get('industry', [])
         self.technology = parameters.get('technology', [])
         self.personal_info = parameters.get('personalInfo', [])
+        self.hourly_rate = parameters.get('hourlyRate')
+        self.daily_rate = parameters.get('dailyRate')
+        self.desired_salary = parameters.get('desiredSalary')
         self.eeo = parameters.get('eeo', [])
         self.technology_default = self.technology['default']
         self.industry_default = self.industry['default']
@@ -122,11 +125,12 @@ class LinkedinEasyApply:
             raise Exception("No more jobs on this page")
 
         try:
-            job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results")
+            job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
             self.scroll_slow(job_results)
             self.scroll_slow(job_results, step=300, reverse=True)
 
-            job_list = self.browser.find_elements(By.CLASS_NAME, 'jobs-search-results__list')[0].find_elements(By.CLASS_NAME, 'jobs-search-results__list-item')
+            job_list = self.browser.find_elements(By.CLASS_NAME, 'jobs-search-results-list')[0].find_elements(By.CLASS_NAME, 'jobs-search-results__list-item')
+
         except:
             raise Exception("No more jobs on this page")
 
@@ -326,65 +330,73 @@ class LinkedinEasyApply:
                 try:
                     radios = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element').find_elements(By.CLASS_NAME, 'fb-radio')
 
-                    radio_text = el.text.lower()
-                    radio_options = [text.text.lower() for text in radios]
-                    answer = "yes"
+                    
+                    if len(radios) > 0:
 
-                    if 'driver\'s licence' in radio_text or 'driver\'s license' in radio_text:
-                        answer = self.get_answer('driversLicence')
-                    elif 'gender' in radio_text or 'veteran' in radio_text or 'race' in radio_text or 'disability' in radio_text or 'latino' in radio_text:
-                        answer = ""
-                        for option in radio_options:
-                            if 'prefer' in option.lower() or 'decline' in option.lower() or 'don\'t' in option.lower() or 'specified' in option.lower() or 'none' in option.lower():
-                                answer = option
+                        radio_text = el.text.lower()
+                        radio_options = [text.text.lower() for text in radios]
+                        answer = "yes"
 
-                        if answer == "":
+                        if 'licence' in radio_text or 'license' in radio_text:
+                            answer = self.get_answer('driversLicence')
+                        elif 'gender' in radio_text or 'veteran' in radio_text or 'race' in radio_text or 'disability' in radio_text or 'latino' in radio_text:
+                            answer = ""
+                            for option in radio_options:
+                                if 'prefer' in option.lower() or 'decline' in option.lower() or 'don\'t' in option.lower() or 'specified' in option.lower() or 'none' in option.lower():
+                                    answer = option
+
+                            if answer == "":
+                                answer = radio_options[len(radio_options) - 1]
+                        elif 'north korea' in radio_text:
+                            answer = 'no'
+                        elif 'sponsor' in radio_text:
+                            answer = self.get_answer('requireVisa')
+                        elif 'authorized' in radio_text or 'authorised' in radio_text or 'legally' in radio_text:
+                            answer = self.get_answer('legallyAuthorized')
+                        elif 'urgent' in radio_text:
+                            answer = self.get_answer('urgentFill')
+                        elif 'commuting' in radio_text:
+                            answer = self.get_answer('commute')
+                        elif 'background check' in radio_text:
+                            answer = self.get_answer('backgroundCheck')
+                        elif 'level of education' in radio_text:
+                            for degree in self.checkboxes['degreeCompleted']:
+                                if degree.lower() in radio_text:
+                                    answer = "yes"
+                                    break
+                        elif 'level of education' in radio_text:
+                            for degree in self.checkboxes['degreeCompleted']:
+                                if degree.lower() in radio_text:
+                                    answer = "yes"
+                                    break
+                        elif 'data retention' in radio_text:
+                            answer = 'no'
+                        elif 'comfortable' in radio_text:
+                            answer = 'yes'
+                        elif 'do you have' in radio_text:
+                            answer = 'yes'
+                        elif 'do you require' in radio_text:
+                            answer = 'no'
+                        else:
                             answer = radio_options[len(radio_options) - 1]
-                    elif 'north korea' in radio_text:
-                        answer = 'no'
-                    elif 'sponsor' in radio_text:
-                        answer = self.get_answer('requireVisa')
-                    elif 'authorized' in radio_text or 'authorised' in radio_text or 'legally' in radio_text:
-                        answer = self.get_answer('legallyAuthorized')
-                    elif 'urgent' in radio_text:
-                        answer = self.get_answer('urgentFill')
-                    elif 'commuting' in radio_text:
-                        answer = self.get_answer('commute')
-                    elif 'background check' in radio_text:
-                        answer = self.get_answer('backgroundCheck')
-                    elif 'level of education' in radio_text:
-                        for degree in self.checkboxes['degreeCompleted']:
-                            if degree.lower() in radio_text:
-                                answer = "yes"
-                                break
-                    elif 'level of education' in radio_text:
-                        for degree in self.checkboxes['degreeCompleted']:
-                            if degree.lower() in radio_text:
-                                answer = "yes"
-                                break
-                    elif 'data retention' in radio_text:
-                        answer = 'no'
-                    else:
-                        answer = radio_options[len(radio_options) - 1]
 
-                    i = 0
-                    to_select = None
-                    for radio in radios:
-                        if answer in radio.text.lower():
-                            to_select = radios[i]
-                        i += 1
+                        i = 0
+                        to_select = None
+                        for radio in radios:
+                            if answer in radio.text.lower():
+                                to_select = radios[i]
+                            i += 1
 
-                    if to_select is None:
-                        to_select = radios[len(radios)-1]
+                        if to_select is None:
+                            to_select = radios[len(radios)-1]
 
-                    self.radio_select(to_select, answer, len(radios) > 2)
+                        self.radio_select(to_select, answer, len(radios) > 2)
 
-                    if radios != []:
-                        continue
+                        if radios != []:
+                            continue
                 except:
                     pass
-                # Questions check
-                try:
+                    
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
                     question_text = question.find_element(By.CLASS_NAME, 'fb-form-element-label').text.lower()
 
@@ -411,7 +423,7 @@ class LinkedinEasyApply:
                         text_field_type = 'text'
 
                     to_enter = ''
-                    if 'experience do you currently have' in question_text:
+                    if 'experience' in question_text:
                         no_of_years = self.industry_default
 
                         for industry in self.industry:
@@ -420,7 +432,7 @@ class LinkedinEasyApply:
                                 break
 
                         to_enter = no_of_years
-                    elif 'many years of work experience do you have using' in question_text:
+                    elif 'many years' in question_text:
                         no_of_years = self.technology_default
 
                         for technology in self.technology:
@@ -442,9 +454,17 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Linkedin']
                     elif 'website' in question_text or 'github' in question_text or 'portfolio' in question_text:
                         to_enter = self.personal_info['Website']
+                    elif 'hourly rate' in question_text:
+                        to_enter = self.hourly_rate
+                    elif 'daily rate' in question_text:
+                        to_enter = self.daily_rate
+                    elif 'desired salary' in question_text:
+                        to_enter = self.desired_salary
+                    elif 'candidate location' in question_text:
+                        to_enter = self.personal_info['City']
                     else:
                         if text_field_type == 'numeric':
-                            to_enter = 0
+                            to_enter = self.technology_default
                         else:
                             to_enter = " ‏‏‎ "
 
@@ -458,17 +478,7 @@ class LinkedinEasyApply:
                     continue
                 except:
                     pass
-                # Date Check
-                try:
-                    date_picker = el.find_element(By.CLASS_NAME, 'artdeco-datepicker__input ')
-                    date_picker.clear()
-                    date_picker.send_keys(date.today().strftime("%m/%d/%y"))
-                    time.sleep(3)
-                    date_picker.send_keys(Keys.RETURN)
-                    time.sleep(2)
-                    continue
-                except:
-                    pass
+                    
                 # Dropdown check
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
@@ -509,12 +519,8 @@ class LinkedinEasyApply:
                         choice = ""
 
                         for option in options:
-                            if answer == 'yes':
+                            if answer in option.lower():
                                 choice = option
-                            else:
-                                if 'no' in option.lower():
-                                    choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
 
@@ -525,27 +531,20 @@ class LinkedinEasyApply:
                         choice = ""
 
                         for option in options:
-                            if answer == 'yes':
-                                # find some common words
+                            if answer in option.lower():
                                 choice = option
-                            else:
-                                if 'no' in option.lower():
-                                    choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
 
                         self.select_dropdown(dropdown_field, choice)
-                    elif 'citizenship' in question_text:
+                    elif 'citizen' in question_text:
                         answer = self.get_answer('legallyAuthorized')
 
                         choice = ""
 
                         for option in options:
-                            if answer == 'yes':
-                                if 'no' in option.lower():
-                                    choice = option
-
+                            if answer in option.lower():
+                                choice = option
                         if choice == "":
                             choice = options[len(options) - 1]
 
