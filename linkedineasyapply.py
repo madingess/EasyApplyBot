@@ -123,8 +123,8 @@ class LinkedinEasyApply:
 
         try:
             job_results = self.browser.find_element_by_class_name("jobs-search-results-list")
-            #self.scroll_slow(job_results)
-            #self.scroll_slow(job_results, step=300, reverse=True)
+            self.scroll_slow(job_results)
+            self.scroll_slow(job_results, step=300, reverse=True)
 
             job_list = self.browser.find_elements_by_class_name('scaffold-layout__list-container')[0].find_elements_by_class_name('jobs-search-results__list-item')
         except:
@@ -211,8 +211,8 @@ class LinkedinEasyApply:
 
         try:
             job_description_area = self.browser.find_element_by_class_name("jobs-search__job-details--container")
-            #self.scroll_slow(job_description_area, end=1600)
-            #self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
+            self.scroll_slow(job_description_area, end=1600)
+            self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
         except:
             pass
 
