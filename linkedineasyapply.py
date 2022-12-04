@@ -400,7 +400,7 @@ class LinkedinEasyApply:
                         text_field_type = 'text'
 
                     to_enter = ''
-                    if 'experience do you' in question_text:
+                    if 'experience' in question_text:
                         no_of_years = None
                         for technology in self.technology:
                             if technology.lower() in question_text:
@@ -564,7 +564,7 @@ class LinkedinEasyApply:
                         self.select_dropdown(dropdown_field, choice)
                     elif 'email' in question_text:
                         continue  # assume email address is filled in properly by default
-                    elif 'experience' in question_text:
+                    elif 'experience' in question_text or 'understanding' in question_text or 'familiar' in question_text or 'able to' in question_text:
                         answer = 'no'
                         for technology in self.technology:
                             if technology.lower() in question_text and self.technology[technology] > 0:
