@@ -478,6 +478,21 @@ class LinkedinEasyApply:
                                 break
 
                         self.select_dropdown(dropdown_field, proficiency)
+                    elif 'assessment' in question_text:
+                        answer = self.get_answer('assessment')
+
+                        choice = ""
+                        for option in options:
+                            if answer == 'yes':
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+
+                        if choice == "":
+                            choice = options[len(options) - 1]
+
+                        self.select_dropdown(dropdown_field, choice)
                     elif 'country code' in question_text:
                         self.select_dropdown(dropdown_field, self.personal_info['Phone Country Code'])
                     elif 'north korea' in question_text:
