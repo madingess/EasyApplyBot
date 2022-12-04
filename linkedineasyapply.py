@@ -325,6 +325,8 @@ class LinkedinEasyApply:
 
                         if answer == "":
                             answer = radio_options[len(radio_options) - 1]
+                    elif 'assessment' in radio_text:
+                        answer = self.get_answer("assessment")
                     elif 'north korea' in radio_text:
                         answer = 'no'
                     elif 'sponsor' in radio_text:
@@ -333,7 +335,7 @@ class LinkedinEasyApply:
                         answer = self.get_answer('legallyAuthorized')
                     elif 'urgent' in radio_text:
                         answer = self.get_answer('urgentFill')
-                    elif 'commuting' in radio_text:
+                    elif 'commut' in radio_text:
                         answer = self.get_answer('commute')
                     elif 'remote' in radio_text:
                         answer = self.get_answer('remote')
@@ -480,6 +482,21 @@ class LinkedinEasyApply:
                         self.select_dropdown(dropdown_field, proficiency)
                     elif 'assessment' in question_text:
                         answer = self.get_answer('assessment')
+
+                        choice = ""
+                        for option in options:
+                            if answer == 'yes':
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+
+                        if choice == "":
+                            choice = options[len(options) - 1]
+
+                        self.select_dropdown(dropdown_field, choice)
+                    elif 'commut' in question_text:
+                        answer = self.get_answer('commute')
 
                         choice = ""
                         for option in options:
