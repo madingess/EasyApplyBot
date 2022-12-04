@@ -20,6 +20,7 @@ class LinkedinEasyApply:
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
         self.file_name = "output"
+        self.unmentioned_skills_file_name = "unmentioned_skills"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
         if 'coverLetter' in parameters['uploads']:
@@ -121,11 +122,11 @@ class LinkedinEasyApply:
             raise Exception("No more jobs on this page")
 
         try:
-            job_results = self.browser.find_element_by_class_name("jobs-search-results")
-            self.scroll_slow(job_results)
-            self.scroll_slow(job_results, step=300, reverse=True)
+            job_results = self.browser.find_element_by_class_name("jobs-search-results-list")
+            #self.scroll_slow(job_results)
+            #self.scroll_slow(job_results, step=300, reverse=True)
 
-            job_list = self.browser.find_elements_by_class_name('jobs-search-results__list')[0].find_elements_by_class_name('jobs-search-results__list-item')
+            job_list = self.browser.find_elements_by_class_name('scaffold-layout__list-container')[0].find_elements_by_class_name('jobs-search-results__list-item')
         except:
             raise Exception("No more jobs on this page")
 
@@ -210,8 +211,8 @@ class LinkedinEasyApply:
 
         try:
             job_description_area = self.browser.find_element_by_class_name("jobs-search__job-details--container")
-            self.scroll_slow(job_description_area, end=1600)
-            self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
+            #self.scroll_slow(job_description_area, end=1600)
+            #self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
         except:
             pass
 
@@ -333,8 +334,12 @@ class LinkedinEasyApply:
                         answer = self.get_answer('urgentFill')
                     elif 'commuting' in radio_text:
                         answer = self.get_answer('commute')
+                    elif 'remote' in radio_text:
+                        answer = self.get_answer('remote')
                     elif 'background check' in radio_text:
                         answer = self.get_answer('backgroundCheck')
+                    elif 'drug test' in radio_text:
+                        answer = self.get_answer('drugTest')
                     elif 'level of education' in radio_text:
                         for degree in self.checkboxes['degreeCompleted']:
                             if degree.lower() in radio_text:
@@ -394,22 +399,17 @@ class LinkedinEasyApply:
                         text_field_type = 'text'
 
                     to_enter = ''
-                    if 'experience do you currently have' in question_text:
-                        no_of_years = self.industry_default
-
-                        for industry in self.industry:
-                            if industry.lower() in question_text:
-                                no_of_years = self.industry[industry]
-                                break
-
-                        to_enter = no_of_years
-                    elif 'many years of work experience do you have using' in question_text:
-                        no_of_years = self.technology_default
-
+                    if 'experience do you' in question_text:
+                        no_of_years = None
                         for technology in self.technology:
                             if technology.lower() in question_text:
                                 no_of_years = self.technology[technology]
 
+                        if no_of_years is None:
+                            print("Unmentioned Skill:")
+                            print(question_text)
+                            self.record_unmentioned_skill(question_text)
+                            no_of_years = self.technology_default
                         to_enter = no_of_years
                     elif 'grade point average' in question_text:
                         to_enter = self.university_gpa
@@ -533,6 +533,23 @@ class LinkedinEasyApply:
                             choice = options[len(options) - 1]
 
                         self.select_dropdown(dropdown_field, choice)
+                    elif 'clearance' in question_text:
+                        answer = self.get_answer('clearance')
+
+                        choice = ""
+
+                        for option in options:
+                            if answer == 'yes':
+                                # find some common words
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+
+                        if choice == "":
+                            choice = options[len(options) - 1]
+
+                        self.select_dropdown(dropdown_field, choice)
                     elif 'gender' in question_text or 'veteran' in question_text or 'race' in question_text or 'disability' in question_text or 'latino' in question_text:
 
                         choice = ""
@@ -568,6 +585,7 @@ class LinkedinEasyApply:
 
                     clickable_checkbox.click()
                 except:
+                    # TODO: Add logging for questions which weren't able to be answered!
                     pass
 
     def unfollow(self):
@@ -662,11 +680,25 @@ class LinkedinEasyApply:
 
     def write_to_file(self, company, job_title, link, location, search_location):
         to_write = [company, job_title, link, location]
-        file_path = self.output_file_directory + self.file_name + search_location + ".csv"
+        #file_path = self.output_file_directory + self.file_name + search_location + ".csv"
+        file_path = self.file_name + search_location + ".csv"
 
         with open(file_path, 'a') as f:
             writer = csv.writer(f)
             writer.writerow(to_write)
+
+    def record_unmentioned_skill(self, question_text):
+        to_write = [question_text]
+        #file_path = self.output_file_directory + self.unmentioned_skills_file_name + ".csv"
+        file_path = self.unmentioned_skills_file_name + ".csv"
+
+        try:
+            with open(file_path, 'a') as f:
+                writer = csv.writer(f)
+                writer.writerow(to_write)
+        except:
+            print("Could not write the skill to the file! No special characters in the question is allowed: ")
+            print(question_text)
 
     def scroll_slow(self, scrollable_element, start=0, end=3600, step=100, reverse=False):
         if reverse:
