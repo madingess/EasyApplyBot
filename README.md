@@ -5,11 +5,17 @@ This is for educational purposes only. I am not responsible if your LinkedIn acc
 
 This bot is written in Python using Selenium.
 
+## Fork Notes
+
+The original code was failing and no longer maintained. This was forked for the purpose of patching and sharing.
+
+By Michael Dingess
+
 ## Setup 
 
 To run the bot, open the command line in the cloned repo directory and install the requirements using pip with the following command:
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Next, you need to fill out the config.yaml file. Most of this is self-explanatory but if you need explanations please see the end of this README.
