@@ -20,7 +20,7 @@ class LinkedinEasyApply:
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
         self.file_name = "output"
-        self.unmentioned_skills_file_name = "unmentioned_skills"
+        self.unprepared_questions_file_name = "unprepared_questions"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
         if 'coverLetter' in parameters['uploads']:
@@ -406,9 +406,7 @@ class LinkedinEasyApply:
                                 no_of_years = self.technology[technology]
 
                         if no_of_years is None:
-                            print("Unmentioned Skill:")
-                            print(question_text)
-                            self.record_unmentioned_skill(question_text)
+                            self.record_unprepared_question("text", question_text)
                             no_of_years = self.technology_default
                         to_enter = no_of_years
                     elif 'grade point average' in question_text:
@@ -427,8 +425,10 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Website']
                     else:
                         if text_field_type == 'numeric':
+                            self.record_unprepared_question("numeric", question_text)
                             to_enter = 0
                         else:
+                            self.record_unprepared_question("text", question_text)
                             to_enter = " ‏‏‎ "
 
                     if text_field_type == 'numeric':
@@ -573,6 +573,7 @@ class LinkedinEasyApply:
                             choice = options[len(options) - 1]
 
                         self.select_dropdown(dropdown_field, choice)
+                        self.record_unprepared_question("dropdown", question_text)
                     continue
                 except:
                     pass
@@ -585,7 +586,6 @@ class LinkedinEasyApply:
 
                     clickable_checkbox.click()
                 except:
-                    # TODO: Add logging for questions which weren't able to be answered!
                     pass
 
     def unfollow(self):
@@ -687,17 +687,16 @@ class LinkedinEasyApply:
             writer = csv.writer(f)
             writer.writerow(to_write)
 
-    def record_unmentioned_skill(self, question_text):
-        to_write = [question_text]
-        #file_path = self.output_file_directory + self.unmentioned_skills_file_name + ".csv"
-        file_path = self.unmentioned_skills_file_name + ".csv"
+    def record_unprepared_question(self, answer_type, question_text):
+        to_write = [answer_type, question_text]
+        file_path = self.unprepared_questions_file_name + ".csv"
 
         try:
             with open(file_path, 'a') as f:
                 writer = csv.writer(f)
                 writer.writerow(to_write)
         except:
-            print("Could not write the skill to the file! No special characters in the question is allowed: ")
+            print("Could not write the unprepared question to the file! No special characters in the question is allowed: ")
             print(question_text)
 
     def scroll_slow(self, scrollable_element, start=0, end=3600, step=100, reverse=False):
