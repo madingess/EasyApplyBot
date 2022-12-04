@@ -329,7 +329,7 @@ class LinkedinEasyApply:
                         answer = self.get_answer("assessment")
                     elif 'north korea' in radio_text:
                         answer = 'no'
-                    elif 'employed' in radio_text:
+                    elif 'previously employ' in radio_text or 'previous employ' in radio_text:
                         answer = 'no'
                     elif 'sponsor' in radio_text:
                         answer = self.get_answer('requireVisa')
@@ -528,7 +528,7 @@ class LinkedinEasyApply:
                             choice = options[len(options) - 1]
 
                         self.select_dropdown(dropdown_field, choice)
-                    elif 'employed' in question_text:
+                    elif 'previously employed' in question_text or 'previous employment' in question_text:
 
                         choice = ""
 
