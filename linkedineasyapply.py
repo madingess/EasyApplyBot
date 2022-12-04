@@ -29,6 +29,7 @@ class LinkedinEasyApply:
             self.cover_letter_dir = ''
         self.checkboxes = parameters.get('checkboxes', [])
         self.university_gpa = parameters['universityGpa']
+        self.salary_minimum = parameters['salaryMinimum']
         self.languages = parameters.get('languages', [])
         self.industry = parameters.get('industry', [])
         self.technology = parameters.get('technology', [])
@@ -424,6 +425,11 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Linkedin']
                     elif 'website' in question_text or 'github' in question_text or 'portfolio' in question_text:
                         to_enter = self.personal_info['Website']
+                    elif 'salary' in question_text:
+                        if text_field_type == 'numeric':
+                            to_enter = self.salary_minimum
+                        else:
+                            to_enter = self.salary_minimum + "+"
                     else:
                         if text_field_type == 'numeric':
                             to_enter = 0
