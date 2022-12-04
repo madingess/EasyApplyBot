@@ -329,6 +329,8 @@ class LinkedinEasyApply:
                         answer = self.get_answer("assessment")
                     elif 'north korea' in radio_text:
                         answer = 'no'
+                    elif 'employed' in radio_text:
+                        answer = 'no'
                     elif 'sponsor' in radio_text:
                         answer = self.get_answer('requireVisa')
                     elif 'authorized' in radio_text or 'authorised' in radio_text or 'legally' in radio_text:
@@ -515,6 +517,18 @@ class LinkedinEasyApply:
                     elif 'country code' in question_text:
                         self.select_dropdown(dropdown_field, self.personal_info['Phone Country Code'])
                     elif 'north korea' in question_text:
+
+                        choice = ""
+
+                        for option in options:
+                            if 'no' in option.lower():
+                                choice = option
+
+                        if choice == "":
+                            choice = options[len(options) - 1]
+
+                        self.select_dropdown(dropdown_field, choice)
+                    elif 'employed' in question_text:
 
                         choice = ""
 
