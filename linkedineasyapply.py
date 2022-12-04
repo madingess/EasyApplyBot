@@ -429,7 +429,7 @@ class LinkedinEasyApply:
                         if text_field_type == 'numeric':
                             to_enter = self.salary_minimum
                         else:
-                            to_enter = self.salary_minimum + "+"
+                            to_enter = "$" + self.salary_minimum + "+"
                     else:
                         if text_field_type == 'numeric':
                             to_enter = 0
