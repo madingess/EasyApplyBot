@@ -354,6 +354,7 @@ class LinkedinEasyApply:
                         answer = 'no'
                     else:
                         answer = radio_options[len(radio_options) - 1]
+                        self.record_unprepared_question("radio", radio_text)
 
                     i = 0
                     to_select = None
@@ -406,7 +407,7 @@ class LinkedinEasyApply:
                                 no_of_years = self.technology[technology]
 
                         if no_of_years is None:
-                            self.record_unprepared_question("text", question_text)
+                            self.record_unprepared_question(text_field_type, question_text)
                             no_of_years = self.technology_default
                         to_enter = no_of_years
                     elif 'grade point average' in question_text:
@@ -425,11 +426,10 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Website']
                     else:
                         if text_field_type == 'numeric':
-                            self.record_unprepared_question("numeric", question_text)
                             to_enter = 0
                         else:
-                            self.record_unprepared_question("text", question_text)
                             to_enter = " ‏‏‎ "
+                        self.record_unprepared_question(text_field_type, question_text)
 
                     if text_field_type == 'numeric':
                         if not isinstance(to_enter, (int, float)):
@@ -558,6 +558,25 @@ class LinkedinEasyApply:
                             if 'prefer' in option.lower() or 'decline' in option.lower() or 'don\'t' in option.lower() or 'specified' in option.lower() or 'none' in option.lower():
                                 choice = option
 
+                        if choice == "":
+                            choice = options[len(options) - 1]
+
+                        self.select_dropdown(dropdown_field, choice)
+                    elif 'email' in question_text:
+                        continue  # assume email address is filled in properly by default
+                    elif 'experience' in question_text:
+                        answer = 'no'
+                        for technology in self.technology:
+                            if technology.lower() in question_text and self.technology[technology] > 0:
+                                answer = 'yes'
+                        if answer is 'no':
+                            # record unlisted experience as unprepared questions
+                            self.record_unprepared_question("dropdown", question_text)
+
+                        choice = ""
+                        for option in options:
+                            if answer in option.lower():
+                                choice = option
                         if choice == "":
                             choice = options[len(options) - 1]
 
