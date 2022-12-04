@@ -421,6 +421,8 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Last Name']
                     elif 'name' in question_text:
                         to_enter = self.personal_info['First Name'] + " " + self.personal_info['Last Name']
+                    elif 'pronouns' in question_text:
+                        to_enter = self.personal_info['Pronouns']
                     elif 'phone' in question_text:
                         to_enter = self.personal_info['Mobile Phone Number']
                     elif 'linkedin' in question_text:
