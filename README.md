@@ -7,7 +7,7 @@ This bot is written in Python using Selenium.
 
 ## Fork Notes
 
-The original code was failing and no longer maintained. This was forked for the purpose of patching and sharing.
+The original code was failing and no longer maintained. This was forked for the purpose of patching and sharing with some new features added.
 
 By Michael Dingess
 
