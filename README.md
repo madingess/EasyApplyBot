@@ -413,3 +413,9 @@ eeo:
  citizenship: Canadian
 ```
 
+## Troubleshooting
+
+If you are receiving 'file or directory' found errors, create a blank file with the specified name. For example:
+```
+touch unprepared_questions.csv
+```
