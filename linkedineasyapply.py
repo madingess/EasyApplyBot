@@ -31,12 +31,10 @@ class LinkedinEasyApply:
         self.university_gpa = parameters['universityGpa']
         self.salary_minimum = parameters['salaryMinimum']
         self.languages = parameters.get('languages', [])
-        self.industry = parameters.get('industry', [])
-        self.technology = parameters.get('technology', [])
+        self.experience = parameters.get('experience', [])
         self.personal_info = parameters.get('personalInfo', [])
         self.eeo = parameters.get('eeo', [])
-        self.technology_default = self.technology['default']
-        self.industry_default = self.industry['default']
+        self.experience_default = self.experience['default']
 
 
     def login(self):
@@ -407,13 +405,13 @@ class LinkedinEasyApply:
                     to_enter = ''
                     if 'experience' in question_text:
                         no_of_years = None
-                        for technology in self.technology:
-                            if technology.lower() in question_text:
-                                no_of_years = self.technology[technology]
+                        for experience in self.experience:
+                            if experience.lower() in question_text:
+                                no_of_years = self.experience[experience]
 
                         if no_of_years is None:
                             self.record_unprepared_question(text_field_type, question_text)
-                            no_of_years = self.technology_default
+                            no_of_years = self.experience_default
                         to_enter = no_of_years
                     elif 'grade point average' in question_text:
                         to_enter = self.university_gpa
@@ -620,8 +618,8 @@ class LinkedinEasyApply:
                         continue  # assume email address is filled in properly by default
                     elif 'experience' in question_text or 'understanding' in question_text or 'familiar' in question_text or 'comfortable' in question_text or 'able to' in question_text:
                         answer = 'no'
-                        for technology in self.technology:
-                            if technology.lower() in question_text and self.technology[technology] > 0:
+                        for experience in self.experience:
+                            if experience.lower() in question_text and self.experience[experience] > 0:
                                 answer = 'yes'
                         if answer is 'no':
                             # record unlisted experience as unprepared questions

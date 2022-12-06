@@ -30,7 +30,7 @@ def validate_yaml():
 
     mandatory_params = ['email', 'password', 'disableAntiLock', 'remote', 'experienceLevel', 'jobTypes', 'date',
                         'positions', 'locations', 'distance', 'outputFileDirectory', 'checkboxes', 'universityGpa',
-                        'languages', 'industry', 'technology', 'personalInfo', 'eeo', 'uploads']
+                        'languages', 'experience', 'personalInfo', 'eeo', 'uploads']
 
     for mandatory_param in mandatory_params:
         if mandatory_param not in parameters:
@@ -93,17 +93,11 @@ def validate_yaml():
     for language in languages:
         assert languages[language].lower() in language_types
 
-    industry = parameters.get('industry', [])
+    experience = parameters.get('experience', [])
 
-    for skill in industry:
-        assert isinstance(industry[skill], int)
-    assert 'default' in industry
-
-    technology = parameters.get('technology', [])
-
-    for tech in technology:
-        assert isinstance(technology[tech], int)
-    assert 'default' in technology
+    for tech in experience:
+        assert isinstance(experience[tech], int)
+    assert 'default' in experience
 
     assert len(parameters['personalInfo'])
     personal_info = parameters.get('personalInfo', [])

@@ -103,7 +103,7 @@ languages:
 
 # ------------ Additional parameters: years of experience ---------------
 # How many years of work experience do you have ...? (whole numbers only)
-technology:
+experience:
  # normal ones
  Accounting/Auditing: 0
  Administrative : 0
