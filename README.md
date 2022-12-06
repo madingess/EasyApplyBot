@@ -26,7 +26,7 @@ password: yourpassword
 
 disableAntiLock: False
 
-remote: False
+remote: True
 
 experienceLevel:
  internship: False
@@ -35,22 +35,22 @@ experienceLevel:
  mid-senior level: False
  director: False
  executive: False
- 
+
 jobTypes:
  full-time: True
- contract: False
+ contract: True
  part-time: False
- temporary: False
+ temporary: True
  internship: False
  other: False
  volunteer: False
- 
+
 date:
  all time: True
  month: False
  week: False
  24 hours: False
- 
+
 positions:
  #- First position
  #- A second position
@@ -61,9 +61,10 @@ locations:
  #- A second location
  #- A third location
  #- ...
+ - Remote
 distance: 25
 
-outputFileDirectory: C:\Users\myDirectory\
+outputFileDirectory: ~/Documents/Applications/EasyApplyBot/EasyApplyBot/
 
 companyBlacklist:
  #- company
@@ -93,13 +94,19 @@ checkboxes:
  # We must fill this position urgently. Can you start immediately? (yes/no checkbox)
  urgentFill: True
  # Are you comfortable commuting to this job's location? (yes/no checkbox)
- commute: True
+ commute: False
+ # Are you comfortable working in a remote environment? (yes/no checkbox)
+ remote: True
+ # Are you comfortable taking a drug in accordance with local/state laws? (yes/no checkbox)
+ drugTest: True
+ # Are you willing to complete an assessment? (yes/no checkbox)
+ assessment: True
  # Have you completed the following level of education: DEGREE TYPE? (yes/no checkbox)
  degreeCompleted:
   - High School Diploma
   - Bachelor's Degree
   # - Associate's Degree
-  # - Master's Degree
+  - Master's Degree
   # - Master of Business Administration
   # - Doctor of Philosophy
   # - Doctor of Medicine
@@ -107,17 +114,19 @@ checkboxes:
  # Are you willing to undergo a background check, in accordance with local law/regulations?
  backgroundCheck: True
 
-# ------------ Additional parameters: univeristyGpa ---------------
+# ------------ Additional parameters: universityGpa ---------------
 universityGpa: 4.0
+
+# ------------ Additional parameters: salaryMinimum ---------------
+salaryMinimum: 106000
 
 # ------------ Additional parameters: languages ---------------
 languages:
  english: Native or bilingual # None, Conversational, Professional, Native or bilingual
 
-
-# ------------ Additional parameters: years of INDUSTRY experience ---------------
-# How many years of TECHNOLOGY experience do you currently have? (whole numbers only)
-industry:
+# ------------ Additional parameters: years of experience ---------------
+# How many years of work experience do you have ...? (whole numbers only)
+technology:
  # normal ones
  Accounting/Auditing: 0
  Administrative : 0
@@ -152,22 +161,11 @@ industry:
  Supply Chain: 0
  Training: 0
  Writing/Editing: 0
- # end normal ones
- # put your custom ones here
- #C++: 0
- #Python: 1
- # default to put for any skill that you did not list
- default: 0
- # end custom ones
-
-
-# ------------ Additional parameters: years of technology experience ---------------
-# How many years of work experience do you have using TECHNOLOGY? (whole numbers only)
-technology:
  #python: 0
  #selenium: 0
- # default to put for any skill that you did not list
+ # default to put for any industry/skill that you did not list
  default: 0
+ 
 # ------------ Additional parameters: personal info ---------------
 personalInfo:
  First Name: FirstName
@@ -179,7 +177,7 @@ personalInfo:
  State: YourState
  Zip: YourZip/Postal
  Linkedin: https://www.linkedin.com/in/my-linkedin-profile
- Website: https://www.my-website.com # github/website is interchangable here
+ Website: https://www.my-website.com # github/website is interchangeable here
 
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:
@@ -187,7 +185,8 @@ eeo:
  race: None
  vetran: None
  disability: None
- citizenship: Canadian
+ citizenship: yes
+ clearance: no
 ```
 
 
@@ -204,14 +203,17 @@ Just fill in your email and password for linkedin.
 email: email@domain.com
 password: yourpassword
 ```
+
 This prevents your computer from going to sleep so the bot can keep running when you are not using it. Set this to True if you want this disabled.
 ```yaml
 disableAntiLock: False
 ```
+
 Set this to True if you want to look for remote jobs only.
 ```yaml
 remote: False
 ```
+
 This is for what level of jobs you want the search to contain. You must choose at least one.
 ```yaml
 experienceLevel:
@@ -222,6 +224,7 @@ experienceLevel:
  director: False
  executive: False
 ```
+
 This is for what type of job you are looking for. You must choose at least one.
 ```yaml
 jobTypes:
@@ -233,6 +236,7 @@ jobTypes:
  other: False
  volunteer: False
 ```
+
 How far back you want to search. You must choose only one.
 ```yaml
 date:
@@ -241,6 +245,7 @@ date:
  week: False
  24 hours: False
  ```
+
 A list of positions you want to apply for. You must include at least one.
 ```yaml
 positions:
@@ -249,6 +254,7 @@ positions:
  #- A third position
  #- ...
  ```
+
 A list of locations you are applying to. You must include at least one.
 ```yaml
 locations:
@@ -256,27 +262,33 @@ locations:
  #- A second location
  #- A third location
  #- ...
+ - Remote
  ```
+
 How far out of the location you want your search to go. You can only input 0, 5, 10, 25, 50, 100 miles.
 ```yaml
 distance: 25
  ```
+
 This is the directory where all the job application stats will go to.
 ```yaml
 outputFileDirectory: C:\Users\myDirectory\
  ```
+
 A list of companies to not apply to.
 ```yaml
 companyBlacklist:
  #- company
  #- company2
  ```
+
 A list of words that will be used to skip over jobs with any of these words in there.
 ```yaml
 titleBlacklist:
  #- word1
  #- word2
  ```
+
 A path to your resume and cover letter.
 ```yaml
 uploads:
@@ -284,6 +296,7 @@ uploads:
  # Cover letter is optional
  #coverLetter: C:\Users\myDirectory\CoverLettter.pdf
  ```
+
 Answer these questions with regards to the company you are applying to. 
 For the degrees part uncomment which degrees you have, and do not add other ones since the linkedin questions are generic.
 ```yaml
@@ -299,7 +312,13 @@ checkboxes:
  # We must fill this position urgently. Can you start immediately? (yes/no checkbox)
  urgentFill: True
  # Are you comfortable commuting to this job's location? (yes/no checkbox)
- commute: True
+ commute: False
+ # Are you comfortable working in a remote environment? (yes/no checkbox)
+ remote: True
+ # Are you comfortable taking a drug in accordance with local/state laws? (yes/no checkbox)
+ drugTest: True
+ # Are you willing to complete an assessment? (yes/no checkbox)
+ assessment: True
  # Have you completed the following level of education: DEGREE TYPE? (yes/no checkbox)
  degreeCompleted:
   - High School Diploma
@@ -313,24 +332,36 @@ checkboxes:
  # Are you willing to undergo a background check, in accordance with local law/regulations?
  backgroundCheck: True
  ```
+
 Input your university gpa. Must be a decimal value to one decimal point.
 ```yaml
-# ------------ Additional parameters: univeristyGpa ---------------
+# ------------ Additional parameters: universityGpa ---------------
 universityGpa: 4.0
  ```
-List all your languages. You must put the profinenciy as either: None, Conversational, Professional, Native or bilingual
+
+Input your minimum desired salary. Must be an integer (no decimal, comma, or currency symbol).
+```yaml
+# ------------ Additional parameters: salaryMinimum ---------------
+salaryMinimum: 106000
+ ```
+
+List all your languages. You must put the proficiency as either: None, Conversational, Professional, Native or bilingual
 ```yaml
 # ------------ Additional parameters: languages ---------------
 languages:
  english: Native or bilingual # None, Conversational, Professional, Native or bilingual
  ```
-Answer the following question for the default industries.
-Next, input your custom ones. This can include technologies, programming languages, frameworks, etc.
-The years of experience needs to be a whole number. Fill in the default for industries you did not list (keep in mind if it's not zero, you will get your application seen more often).
+
+Answer the following question for your experience in industries, tools and technologies. 
+Things like programming languages, frameworks, etc.
+The years of experience must be a whole number.
+Fill in the default for experience you did not list (keep in mind if it's not zero, you will get your application seen more often).
+
+CAVEAT: This is based on keywords in questions. If you put 'R' for experience with the programming language R, this will match all questions with the character 'r'.
 ```yaml
-# ------------ Additional parameters: years of INDUSTRY experience ---------------
-# How many years of TECHNOLOGY experience do you currently have? (whole numbers only)
-industry:
+# ------------ Additional parameters: years of experience ---------------
+# How many years of work experience do you have ...? (whole numbers only)
+experience:
  # normal ones
  Accounting/Auditing: 0
  Administrative : 0
@@ -365,29 +396,14 @@ industry:
  Supply Chain: 0
  Training: 0
  Writing/Editing: 0
- # put your custom ones here
- #C++: 0
- #Python: 1
- # end custom ones
- # default to put for any skill that you did not list
- default: 0
- ```
-Answer the following question for your tools and technologies. 
-Things like programming languages, frameworks, etc.
-The years of experience needs to be a whole number.
-Fill in the default for technologies you did not list (keep in mind if it's not zero, you will get your application seen more often).
-```yaml
-# ------------ Additional parameters: years of technology experience ---------------
-# How many years of work experience do you have using TECHNOLOGY? (whole numbers only)
-technology:
  #python: 0
  #selenium: 0
- # default to put for any skill that you did not list
+ # default to put for any industry/skill that you did not list
  default: 0
   ```
 Input your personal info. Include the state/province in the city name to not get the wrong city when choosing from a dropdown.
 The phone country code needs to be exact for the one that is on linkedin.
-The website is interchangable for github/portfolio/website.
+The website is interchangeable for github/portfolio/website.
 ```yaml
 # ------------ Additional parameters: personal info ---------------
 personalInfo:
@@ -400,9 +416,9 @@ personalInfo:
  State: YourState
  Zip: YourZip/Postal
  Linkedin: https://www.linkedin.com/in/my-linkedin-profile
- Website: https://www.my-website.com # github/website is interchangable here
+ Website: https://www.my-website.com # github/website is interchangeable here
   ```
-This is unused at the moment. For the EEO the bot will try to decine to answer for everything.
+This is unused at the moment. For the EEO the bot will try to decline to answer for everything.
 ```yaml
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:
@@ -410,7 +426,8 @@ eeo:
  race: None
  vetran: None
  disability: None
- citizenship: Canadian
+ citizenship: yes
+ clearance: no
 ```
 
 ## Troubleshooting
