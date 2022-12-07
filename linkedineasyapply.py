@@ -248,7 +248,7 @@ class LinkedinEasyApply:
                 traceback.print_exc()
                 self.browser.find_element(By.CLASS_NAME, 'artdeco-modal__dismiss').click()
                 time.sleep(random.uniform(3, 5))
-                self.browser.ffind_elements(By.CLASS_NAME, 'artdeco-modal__confirm-dialog-btn')[1].click()
+                self.browser.find_elements(By.CLASS_NAME, 'artdeco-modal__confirm-dialog-btn')[1].click()
                 time.sleep(random.uniform(3, 5))
                 raise Exception("Failed to apply to job!")
 
@@ -273,7 +273,7 @@ class LinkedinEasyApply:
 
     def home_address(self, element):
         try:
-            groups = element.ffind_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
+            groups = element.find_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
             if len(groups) > 0:
                 for group in groups:
                     lb = group.find_element(By.TAG_NAME, 'label').text.lower()
@@ -302,12 +302,12 @@ class LinkedinEasyApply:
 
     def additional_questions(self):
         #pdb.set_trace()
-        frm_el = self.browser.ffind_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
+        frm_el = self.browser.find_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
         if len(frm_el) > 0:
             for el in frm_el:
                 # Radio check
                 try:
-                    radios = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element').ffind_elements(By.CLASS_NAME, 'fb-radio')
+                    radios = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element').find_elements(By.CLASS_NAME, 'fb-radio')
 
                     radio_text = el.text.lower()
                     radio_options = [text.text.lower() for text in radios]
@@ -703,7 +703,7 @@ class LinkedinEasyApply:
 
     # Contact info fill-up
     def contact_info(self):
-        frm_el = self.browser.ffind_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
+        frm_el = self.browser.find_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
         if len(frm_el) > 0:
             for el in frm_el:
                 text = el.text.lower()
@@ -725,7 +725,7 @@ class LinkedinEasyApply:
         try:
             easy_apply_content = self.browser.find_element(By.CLASS_NAME, 'jobs-easy-apply-content')
             b4 = easy_apply_content.find_element(By.CLASS_NAME, 'pb4')
-            pb4 = easy_apply_content.ffind_elements(By.CLASS_NAME, 'pb4')
+            pb4 = easy_apply_content.find_elements(By.CLASS_NAME, 'pb4')
             if len(pb4) > 0:
                 for pb in pb4:
                     try:
