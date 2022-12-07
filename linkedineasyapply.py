@@ -126,6 +126,8 @@ class LinkedinEasyApply:
             self.scroll_slow(job_results, step=300, reverse=True)
 
             job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(By.CLASS_NAME, 'jobs-search-results__list-item')
+            if len(job_list) == 0:
+                raise Exception("No job class elements found in page")
         except:
             raise Exception("No more jobs on this page")
 
@@ -308,6 +310,8 @@ class LinkedinEasyApply:
                 # Radio check
                 try:
                     radios = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element').find_elements(By.CLASS_NAME, 'fb-radio')
+                    if len(radios) == 0:
+                        raise Exception("No radio found in element")
 
                     radio_text = el.text.lower()
                     radio_options = [text.text.lower() for text in radios]
@@ -671,6 +675,8 @@ class LinkedinEasyApply:
             file_upload_elements = (By.CSS_SELECTOR, "input[name='file']")
             if len(self.browser.find_elements(file_upload_elements[0], file_upload_elements[1])) > 0:
                 input_buttons = self.browser.find_elements(file_upload_elements[0], file_upload_elements[1])
+                if len(input_buttons) == 0:
+                    raise Exception("No input elements found in element")
                 for upload_button in input_buttons:
                     upload_type = upload_button.find_element(By.XPATH, "..").find_element(By.XPATH, "preceding-sibling::*")
                     if 'resume' in upload_type.text.lower():
@@ -726,6 +732,8 @@ class LinkedinEasyApply:
             easy_apply_content = self.browser.find_element(By.CLASS_NAME, 'jobs-easy-apply-content')
             b4 = easy_apply_content.find_element(By.CLASS_NAME, 'pb4')
             pb4 = easy_apply_content.find_elements(By.CLASS_NAME, 'pb4')
+            if len(pb4) == 0:
+                raise Exception("No pb4 class elements found in element")
             if len(pb4) > 0:
                 for pb in pb4:
                     try:
