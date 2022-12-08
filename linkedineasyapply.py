@@ -122,8 +122,8 @@ class LinkedinEasyApply:
 
         try:
             job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            self.scroll_slow(job_results)
-            self.scroll_slow(job_results, step=300, reverse=True)
+            #self.scroll_slow(job_results)
+            #self.scroll_slow(job_results, step=300, reverse=True)
 
             job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(By.CLASS_NAME, 'jobs-search-results__list-item')
             if len(job_list) == 0:
@@ -212,8 +212,8 @@ class LinkedinEasyApply:
 
         try:
             job_description_area = self.browser.find_element(By.CLASS_NAME, "jobs-search__job-details--container")
-            self.scroll_slow(job_description_area, end=1600)
-            self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
+            #self.scroll_slow(job_description_area, end=1600)
+            #self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
         except:
             pass
 
@@ -718,15 +718,17 @@ class LinkedinEasyApply:
                     continue
                 elif 'phone number' in text:
                     try:
-                        country_code_picker = el.find_element(By.CLASS_NAME, 'fb-dropdown__select')
+                        country_code_picker = el.find_element(By.XPATH, '//select[contains(@id,"phoneNumber")][contains(@id,"country")]')
                         self.select_dropdown(country_code_picker, self.personal_info['Phone Country Code'])
-                    except:
+                    except Exception as e:
                         print("Country code " + self.personal_info['Phone Country Code'] + " not found! Make sure it is exact.")
+                        print(e)
                     try:
-                        phone_number_field = el.find_element(By.CLASS_NAME, 'fb-single-line-text__input')
+                        phone_number_field = el.find_element(By.XPATH, '//input[contains(@id,"phoneNumber")][contains(@id,"nationalNumber")]')
                         self.enter_text(phone_number_field, self.personal_info['Mobile Phone Number'])
-                    except:
-                        print("Could not input phone number.")
+                    except Exception as e:
+                        print("Could not input phone number:")
+                        print(e)
 
     def fill_up(self):
         try:
