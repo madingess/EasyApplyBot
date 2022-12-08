@@ -625,7 +625,7 @@ class LinkedinEasyApply:
                         for experience in self.experience:
                             if experience.lower() in question_text and self.experience[experience] > 0:
                                 answer = 'yes'
-                        if answer is 'no':
+                        if answer == 'no':
                             # record unlisted experience as unprepared questions
                             self.record_unprepared_question("dropdown", question_text)
 
