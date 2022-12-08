@@ -11,11 +11,12 @@ The original code was failing and no longer maintained. This was forked for the 
 
 By Michael Dingess
 
-## Setup 
+## Setup & Startup
 
-To run the bot, open the command line in the cloned repo directory and install the requirements using pip with the following command:
+To run the bot, open the command line in the cloned repository directory. Activate the virtual environment and start the bot using these commands:
 ```bash
-pip3 install -r requirements.txt
+source venv/bin/activate
+python3 main.py
 ```
 
 Next, you need to fill out the config.yaml file. Most of this is self-explanatory but if you need explanations please see the end of this README.
