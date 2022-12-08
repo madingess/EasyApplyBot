@@ -382,11 +382,11 @@ class LinkedinEasyApply:
                 # Questions check
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-                    question_text = question.find_element(By.CLASS_NAME, 'fb-form-element-label').text.lower()
+                    question_text = question.find_element(By.CLASS_NAME, 'artdeco-text-input--label').text.lower()
 
                     txt_field_visible = False
                     try:
-                        txt_field = question.find_element(By.CLASS_NAME, 'fb-single-line-text__input')
+                        txt_field = question.find_element(By.CLASS_NAME, 'artdeco-text-input--input')
 
                         txt_field_visible = True
                     except:
