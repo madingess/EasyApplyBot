@@ -352,7 +352,6 @@ class LinkedinEasyApply:
                                 answer = "yes"
                                 break
                     elif 'experience' in radio_text:
-                        no_of_years = None
                         for experience in self.experience:
                             if experience.lower() in question_text:
                                 answer = "yes"
