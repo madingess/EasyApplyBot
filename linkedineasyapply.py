@@ -309,7 +309,8 @@ class LinkedinEasyApply:
             for el in frm_el:
                 # Radio check
                 try:
-                    radios = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element').find_elements(By.CLASS_NAME, 'fb-radio')
+                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+                    radios = question.find_elements(By.CLASS_NAME, 'fb-text-selectable__option')
                     if len(radios) == 0:
                         raise Exception("No radio found in element")
 
@@ -333,8 +334,6 @@ class LinkedinEasyApply:
                         answer = 'no'
                     elif 'previously employ' in radio_text or 'previous employ' in radio_text:
                         answer = 'no'
-                    elif 'sponsor' in radio_text:
-                        answer = self.get_answer('requireVisa')
                     elif 'authorized' in radio_text or 'authorised' in radio_text or 'legally' in radio_text:
                         answer = self.get_answer('legallyAuthorized')
                     elif 'urgent' in radio_text:
@@ -352,13 +351,15 @@ class LinkedinEasyApply:
                             if degree.lower() in radio_text:
                                 answer = "yes"
                                 break
-                    elif 'level of education' in radio_text:
+                    elif 'level of education' in radio_text:  # TODO: This should be an experience check instead?
                         for degree in self.checkboxes['degreeCompleted']:
                             if degree.lower() in radio_text:
                                 answer = "yes"
                                 break
                     elif 'data retention' in radio_text:
                         answer = 'no'
+                    elif 'sponsor' in radio_text:
+                        answer = self.get_answer('requireVisa')
                     else:
                         answer = radio_options[len(radio_options) - 1]
                         self.record_unprepared_question("radio", radio_text)
@@ -382,29 +383,26 @@ class LinkedinEasyApply:
                 # Questions check
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-                    question_text = question.find_element(By.CLASS_NAME, 'artdeco-text-input--label').text.lower()
+                    question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
 
                     txt_field_visible = False
                     try:
-                        txt_field = question.find_element(By.CLASS_NAME, 'artdeco-text-input--input')
-
+                        txt_field = question.find_element(By.TAG_NAME, 'input')
                         txt_field_visible = True
                     except:
                         try:
-                            txt_field = question.find_element(By.CLASS_NAME, 'fb-textarea')
-
+                            txt_field = question.find_element(By.TAG_NAME, 'textarea')  # TODO: Test textarea
                             txt_field_visible = True
                         except:
                             pass
 
-                    if txt_field_visible != True:
-                        txt_field = question.find_element(By.CLASS_NAME, 'multi-line-text__input')
-
-                    text_field_type = txt_field.get_attribute('name').lower()
-                    if 'numeric' in text_field_type:
+                    text_field_type = txt_field.get_attribute('type').lower()
+                    if 'numeric' in text_field_type:  # TODO: test numeric type
                         text_field_type = 'numeric'
                     elif 'text' in text_field_type:
                         text_field_type = 'text'
+                    else:
+                        raise Exception("Could not determine input type of input field!")
 
                     to_enter = ''
                     if 'experience' in question_text:
@@ -469,12 +467,10 @@ class LinkedinEasyApply:
                 # Dropdown check
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-                    question_text = question.find_element(By.CLASS_NAME, 'fb-form-element-label').text.lower()
-
-                    dropdown_field = question.find_element(By.CLASS_NAME, 'fb-dropdown__select')
+                    question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
+                    dropdown_field = question.find_element(By.TAG_NAME, 'select')
 
                     select = Select(dropdown_field)
-
                     options = [options.text for options in select.options]
 
                     if 'proficiency' in question_text:
