@@ -351,9 +351,10 @@ class LinkedinEasyApply:
                             if degree.lower() in radio_text:
                                 answer = "yes"
                                 break
-                    elif 'level of education' in radio_text:  # TODO: This should be an experience check instead?
-                        for degree in self.checkboxes['degreeCompleted']:
-                            if degree.lower() in radio_text:
+                    elif 'experience' in radio_text:
+                        no_of_years = None
+                        for experience in self.experience:
+                            if experience.lower() in question_text:
                                 answer = "yes"
                                 break
                     elif 'data retention' in radio_text:
