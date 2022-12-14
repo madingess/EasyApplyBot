@@ -212,8 +212,8 @@ class LinkedinEasyApply:
 
         try:
             job_description_area = self.browser.find_element(By.CLASS_NAME, "jobs-search__job-details--container")
-            #self.scroll_slow(job_description_area, end=1600)
-            #self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
+            self.scroll_slow(job_description_area, end=1600)
+            self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
         except:
             pass
 
