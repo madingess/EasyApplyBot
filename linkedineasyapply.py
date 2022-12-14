@@ -223,30 +223,22 @@ class LinkedinEasyApply:
         button_text = ""
         submit_application_text = 'submit application'
         while submit_application_text not in button_text.lower():
-            retries = 3
-            while retries > 0:
-                try:
-                    self.fill_up()
-                    next_button = self.browser.find_element(By.CLASS_NAME, "artdeco-button--primary")
-                    button_text = next_button.text.lower()
-                    if submit_application_text in button_text:
-                        try:
-                            self.unfollow()
-                        except:
-                            print("Failed to unfollow company!")
-                    time.sleep(random.uniform(1.5, 2.5))
-                    next_button.click()
-                    time.sleep(random.uniform(3.0, 5.0))
+            try:
+                self.fill_up()
+                next_button = self.browser.find_element(By.CLASS_NAME, "artdeco-button--primary")
+                button_text = next_button.text.lower()
+                if submit_application_text in button_text:
+                    try:
+                        self.unfollow()
+                    except:
+                        print("Failed to unfollow company!")
+                time.sleep(random.uniform(1.5, 2.5))
+                next_button.click()
+                time.sleep(random.uniform(3.0, 5.0))
 
-                    if 'please enter a valid answer' in self.browser.page_source.lower() or 'file is required' in self.browser.page_source.lower():
-                        retries -= 1
-                        print("Retrying application, attempts left: " + str(retries))
-                    else:
-                        break
-                except:
-                    traceback.print_exc()
-                    raise Exception("Failed to apply to job!")
-            if retries == 0:
+                if 'please enter a valid answer' in self.browser.page_source.lower() or 'file is required' in self.browser.page_source.lower():
+                    raise Exception("Failed answering required questions or uploading required files.")
+            except:
                 traceback.print_exc()
                 self.browser.find_element(By.CLASS_NAME, 'artdeco-modal__dismiss').click()
                 time.sleep(random.uniform(3, 5))
