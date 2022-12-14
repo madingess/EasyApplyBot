@@ -122,8 +122,8 @@ class LinkedinEasyApply:
 
         try:
             job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            #self.scroll_slow(job_results)
-            #self.scroll_slow(job_results, step=300, reverse=True)
+            self.scroll_slow(job_results)
+            self.scroll_slow(job_results, step=300, reverse=True)
 
             job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(By.CLASS_NAME, 'jobs-search-results__list-item')
             if len(job_list) == 0:
