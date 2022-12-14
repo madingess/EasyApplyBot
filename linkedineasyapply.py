@@ -353,7 +353,7 @@ class LinkedinEasyApply:
                                 break
                     elif 'experience' in radio_text:
                         for experience in self.experience:
-                            if experience.lower() in question_text:
+                            if experience.lower() in radio_text:
                                 answer = "yes"
                                 break
                     elif 'data retention' in radio_text:
