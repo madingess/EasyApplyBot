@@ -51,6 +51,10 @@ titleBlacklist:
  #- word1
  #- word2
 
+posterBlacklist:
+ #- name1
+ #- name2
+
 uploads:
  resume: C:\Users\myDirectory\Resume.pdf
  # Cover letter is optional

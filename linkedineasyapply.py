@@ -15,6 +15,7 @@ class LinkedinEasyApply:
         self.disable_lock = parameters['disableAntiLock']
         self.company_blacklist = parameters.get('companyBlacklist', []) or []
         self.title_blacklist = parameters.get('titleBlacklist', []) or []
+        self.poster_blacklist = parameters.get('posterBlacklist', []) or []
         self.positions = parameters.get('positions', [])
         self.locations = parameters.get('locations', [])
         self.base_search_url = self.get_base_search_url(parameters)
@@ -135,7 +136,7 @@ class LinkedinEasyApply:
             raise Exception("No more jobs on this page")
 
         for job_tile in job_list:
-            job_title, company, job_location, apply_method, link = "", "", "", "", ""
+            job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
 
             try:
                 job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text
@@ -144,6 +145,15 @@ class LinkedinEasyApply:
                 pass
             try:
                 company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__company-name').text
+            except:
+                pass
+            try:
+                # get the name of the person who posted for the position, if any is listed
+                hiring_line = job_tile.find_element(By.XPATH, '//span[contains(.,\' is hiring for this\')]')
+                hiring_line_text = hiring_line.text
+                name_terminating_index = hiring_line_text.find(' is hiring for this')
+                if name_terminating_index != -1:
+                    poster = hiring_line_text[:name_terminating_index]
             except:
                 pass
             try:
@@ -164,7 +174,8 @@ class LinkedinEasyApply:
                     break
 
             if company.lower() not in [word.lower() for word in self.company_blacklist] and \
-               contains_blacklisted_keywords is False and link not in self.seen_jobs:
+                    poster.lower() not in [word.lower() for word in self.poster_blacklist] and \
+                    contains_blacklisted_keywords is False and link not in self.seen_jobs:
                 try:
                     job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
                     job_el.click()
@@ -199,7 +210,7 @@ class LinkedinEasyApply:
                     print("Could not apply to the job!")
                     pass
             else:
-                print("Job contains blacklisted keyword or company name!")
+                print("Job contains blacklisted keyword or company or poster name!")
             self.seen_jobs += link
 
     def apply_to_job(self):

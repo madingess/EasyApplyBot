@@ -7,7 +7,7 @@ This bot is written in Python using Selenium.
 
 ## Fork Notes
 
-The original code was failing and no longer maintained. This was forked for the purpose of patching and sharing with some new features added.
+The original code was failing and no longer maintained. This was forked for the purpose of patching and sharing with new features added.
 
 By Michael Dingess
 
@@ -75,6 +75,10 @@ titleBlacklist:
  #- word1
  #- word2
 
+posterBlacklist:
+ #- name1
+ #- name2
+
 uploads:
  resume: C:\Users\myDirectory\Resume.pdf
  # Cover letter is optional
@@ -127,7 +131,7 @@ languages:
 
 # ------------ Additional parameters: years of experience ---------------
 # How many years of work experience do you have ...? (whole numbers only)
-technology:
+experience:
  # normal ones
  Accounting/Auditing: 0
  Administrative : 0
