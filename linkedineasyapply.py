@@ -397,7 +397,7 @@ class LinkedinEasyApply:
                             txt_field = question.find_element(By.TAG_NAME, 'textarea')  # TODO: Test textarea
                             txt_field_visible = True
                         except:
-                            pass
+                            raise Exception("Could not find textarea or input tag for question")
 
                     text_field_type = txt_field.get_attribute('type').lower()
                     if 'numeric' in text_field_type:  # TODO: test numeric type
