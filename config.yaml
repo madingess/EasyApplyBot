@@ -151,7 +151,7 @@ experience:
 personalInfo:
  First Name: FirstName
  Last Name: LastName
- Phone Country Code: Canada (+1) # See linkedin for your country code, must be exact
+ Phone Country Code: Canada (+1) # See linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
  Mobile Phone Number: 1234567890
  Street address: 123 Fake Street
  City: Red Deer, Alberta # Include the state/province as well!
