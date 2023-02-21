@@ -3,7 +3,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-from datetime import date
+from datetime import date, datetime
 from itertools import product
 
 
@@ -760,7 +760,7 @@ class LinkedinEasyApply:
             pass
 
     def write_to_file(self, company, job_title, link, location, search_location):
-        to_write = [company, job_title, link, location]
+        to_write = [company, job_title, link, location, datetime.now()]
         #file_path = self.output_file_directory + self.file_name + search_location + ".csv"
         file_path = self.file_name + search_location + ".csv"
 
