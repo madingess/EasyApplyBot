@@ -18,6 +18,7 @@ To run the bot, open the command line in the cloned repository directory. Activa
 source venv/bin/activate
 python3 main.py
 ```
+_Note: Virtual environment may cause a conflict if you intend to use an IDE like PyCharm hence you may require to configure your IDE accordingly. In case you are new to Python as a whole, a simple solution could be the deletion of 'venv' folder once you download the bot files.'_
 
 Next, you need to fill out the config.yaml file. Most of this is self-explanatory but if you need explanations please see the end of this README.
 
