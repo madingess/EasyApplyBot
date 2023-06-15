@@ -31,6 +31,7 @@ class LinkedinEasyApply:
         self.checkboxes = parameters.get('checkboxes', [])
         self.university_gpa = parameters['universityGpa']
         self.salary_minimum = parameters['salaryMinimum']
+        self.notice_period = parameters['noticePeriod']
         self.languages = parameters.get('languages', [])
         self.experience = parameters.get('experience', [])
         self.personal_info = parameters.get('personalInfo', [])
@@ -117,7 +118,7 @@ class LinkedinEasyApply:
             pass
         if 'No matching jobs found' in no_jobs_text:
             raise Exception("No more jobs on this page")
-
+            
         if 'unfortunately, things aren' in self.browser.page_source.lower():
             raise Exception("No more jobs on this page")
 
@@ -290,7 +291,7 @@ class LinkedinEasyApply:
                         time.sleep(3)
                         input_field.send_keys(Keys.DOWN)
                         input_field.send_keys(Keys.RETURN)
-                    elif 'zip' in lb or 'postal' in lb:
+                    elif 'zip' in lb or 'zip / postal code' in lb or 'postal' in lb:
                         self.enter_text(input_field, self.personal_info['Zip'])
                     elif 'state' in lb or 'province' in lb:
                         self.enter_text(input_field, self.personal_info['State'])
@@ -434,11 +435,21 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Linkedin']
                     elif 'website' in question_text or 'github' in question_text or 'portfolio' in question_text:
                         to_enter = self.personal_info['Website']
+                    elif 'notice period' in question_text:
+                        if text_field_type == 'numeric':
+                            to_enter = float(self.notice_period)
+                        else:
+                            to_enter = str(self.notice_period)
                     elif 'salary' in question_text:
                         if text_field_type == 'numeric':
-                            to_enter = self.salary_minimum
+                            to_enter = float(self.salary_minimum) # convert to float
                         else:
-                            to_enter = "$" + self.salary_minimum + "+"
+                            to_enter = str(self.salary_minimum)
+                    elif 'salary expectation' in question_text:
+                        if text_field_type == 'numeric':
+                            to_enter = float(self.salary_minimum)
+                        else:
+                            to_enter = str(self.salary_minimum)
                     else:
                         if text_field_type == 'numeric':
                             to_enter = 0
