@@ -1,10 +1,11 @@
 import yaml
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
-from linkedineasyapply import LinkedinEasyApply
 from validate_email import validate_email
+from webdriver_manager.chrome import ChromeDriverManager
+from linkedineasyapply import LinkedinEasyApply
+
 
 def init_browser():
     browser_options = Options()
