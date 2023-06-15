@@ -84,10 +84,10 @@ checkboxes:
  assessment: True
  # Have you completed the following level of education: DEGREE TYPE? (yes/no checkbox)
  degreeCompleted:
-  - High School Diploma
-  - Bachelor's Degree
+  # - High School Diploma
+  # - Bachelor's Degree
   # - Associate's Degree
-  - Master's Degree
+  # - Master's Degree
   # - Master of Business Administration
   # - Doctor of Philosophy
   # - Doctor of Medicine
@@ -96,14 +96,17 @@ checkboxes:
  backgroundCheck: True
 
 # ------------ Additional parameters: universityGpa ---------------
-universityGpa: 4.0
+universityGpa: 3.0
 
 # ------------ Additional parameters: salaryMinimum ---------------
-salaryMinimum: 106000
+salaryMinimum: 35000
 
 # ------------ Additional parameters: languages ---------------
 languages:
  english: Native or bilingual # None, Conversational, Professional, Native or bilingual
+
+# ------------ Additional parameters: noticePeriod in weeks ---------------
+noticePeriod: 8
 
 # ------------ Additional parameters: years of experience ---------------
 # How many years of work experience do you have ...? (whole numbers only)
@@ -142,6 +145,29 @@ experience:
  Supply Chain: 0
  Training: 0
  Writing/Editing: 0
+ VBA: 0
+ PowerBI: 0
+ PowerQuery: 0
+ Excel: 0
+ PowerPoint: 0
+ Word: 0
+ SQL Server: 0
+ communication: 0
+ financial markets: 0
+ business: 0
+ financial services: 0
+ team leadership: 0
+ cash flow: 0
+ hedging: 0
+ treasury services: 0
+ microsoft power bi: 0
+ accounting: 0
+ auditing: 0
+ financial modeling: 0
+ budgeting & forecasting: 0
+ fp&a: 0
+ PQE: 0
+ Training & Development: 0
  #python: 0
  #selenium: 0
  # default to put for any industry/skill that you did not list
