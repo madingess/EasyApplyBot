@@ -440,6 +440,11 @@ class LinkedinEasyApply:
                             to_enter = float(self.notice_period)
                         else:
                             to_enter = str(self.notice_period)
+                    elif 'weeks\' notice' in question_text:
+                        if text_field_type == 'numeric':
+                            to_enter = float(self.notice_period)
+                        else:
+                            to_enter = str(self.notice_period)
                     elif 'salary' in question_text:
                         if text_field_type == 'numeric':
                             to_enter = float(self.salary_minimum) # convert to float
