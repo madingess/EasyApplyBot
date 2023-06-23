@@ -413,14 +413,14 @@ class LinkedinEasyApply:
                         no_of_years = None
                         for experience in self.experience:
                             if experience.lower() in question_text:
-                                no_of_years = self.experience[experience]
+                                no_of_years = int(self.experience[experience])
                                 break
                         if no_of_years is None:
                             self.record_unprepared_question(text_field_type, question_text)
-                            no_of_years = self.experience_default
+                            no_of_years = int(self.experience_default)
                         to_enter = no_of_years
                     elif 'grade point average' in question_text:
-                        to_enter = self.university_gpa
+                        to_enter = float(self.university_gpa)
                     elif 'first name' in question_text:
                         to_enter = self.personal_info['First Name']
                     elif 'last name' in question_text:
