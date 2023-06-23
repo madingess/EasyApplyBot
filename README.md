@@ -34,11 +34,19 @@ If you encounter any "dependencies not found" errors, ensure that the dependenci
 using your IDE or, if using the command line/terminal, run `pip install -r requirements.txt` before
 executing `python3 main.py` to start the bot.
 
-### Common Error
+#### Known issues
+1. IDEs like PyCharm sometimes conflict with the included virtual environment (venv) in this project. To resolve this,
+   you can delete the `venv` folder and configure the Python interpreter to use the "local" option. Additionally,
+   install the dependencies from `requirements.txt` to ensure a successful run of `main.py`.
 
-IDEs like PyCharm sometimes conflict with the included virtual environment (venv) in this project. To resolve this, you
-can delete the `venv` folder and configure the Python interpreter to use the "local" option. Additionally, install the
-dependencies from `requirements.txt` to ensure a successful run of `main.py`.
+2. Sometimes, the bot may encounter an issue where it gets stuck in an endless loop of opening external links. This
+   situation arises when two specific conditions are met.  First, when the bot reaches a point where it receives a
+   message saying "no matching jobs found for(...)" and second, LinkedIn suggests "Jobs you may be interested
+   in..." along with links to external websites. There are two possible solutions: a) quickly changing the search
+   keywords so Easy Apply jobs appear and bot continues its task, or b) stop and restart the bot.
+
+3. The bot currently faces challenges in providing accurate or fail responses to questions in non-English job posts. 
+   
 
 ## Appendix: Step-by-Step Guide to config.yaml
 
