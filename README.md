@@ -206,6 +206,12 @@ languages:
  french: Conversational
 ```
 
+Add notice period in weeks specific to your circumstances. For example:
+```yaml
+# ------------ Additional parameters: noticePeriod in weeks ---------------
+noticePeriod: 8
+```
+
 Update following section based on your specific needs. Some skills are added as a default value, but feel free to add more as necessary to your profession and industry. The years of experience must be a whole number.
 Use the `default` as a generic values for skills unexpected questions from employers so the bot does not respond with zero on those unexpected skills.
 
