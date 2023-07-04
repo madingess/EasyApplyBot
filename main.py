@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from linkedineasyapply import LinkedinEasyApply
 from validate_email import validate_email
+from selenium.webdriver.chrome.service import Service
 
 def init_browser():
     browser_options = Options()
@@ -12,8 +13,8 @@ def init_browser():
 
     for option in options:
         browser_options.add_argument(option)
-
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=browser_options)
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=browser_options,)
 
     driver.set_window_position(0, 0)
     driver.maximize_window()
