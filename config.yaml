@@ -185,6 +185,8 @@ personalInfo:
  Zip: YourZip/Postal
  Linkedin: https://www.linkedin.com/in/my-linkedin-profile
  Website: https://www.my-website.com # github/website is interchangeable here
+ MessageToManager: "Hi, I am a qualified professional with well decorated career and diversified experience. 
+  Please have a look at my resume. Thanks." # Keep message short and within the quotes. This is a testing feature and may not work.
 
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:

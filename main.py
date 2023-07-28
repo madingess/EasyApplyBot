@@ -10,17 +10,16 @@ from linkedineasyapply import LinkedinEasyApply
 def init_browser():
     browser_options = Options()
     options = ['--disable-blink-features', '--no-sandbox', '--start-maximized', '--disable-extensions',
-               '--ignore-certificate-errors', '--disable-blink-features=AutomationControlled', '--remote-debugging-port=9222']
+               '--ignore-certificate-errors', '--disable-blink-features=AutomationControlled',
+               '--remote-debugging-port=9222']
 
     for option in options:
         browser_options.add_argument(option)
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=browser_options)
-
     driver.set_window_position(0, 0)
     driver.maximize_window()
-
     return driver
 
 
@@ -41,14 +40,13 @@ def validate_yaml():
 
     assert validate_email(parameters['email'])
     assert len(str(parameters['password'])) > 0
-
     assert isinstance(parameters['disableAntiLock'], bool)
-
     assert isinstance(parameters['remote'], bool)
 
     assert len(parameters['experienceLevel']) > 0
     experience_level = parameters.get('experienceLevel', [])
     at_least_one_experience = False
+
     for key in experience_level.keys():
         if experience_level[key]:
             at_least_one_experience = True
@@ -60,11 +58,12 @@ def validate_yaml():
     for key in job_types.keys():
         if job_types[key]:
             at_least_one_job_type = True
-    assert at_least_one_job_type
 
+    assert at_least_one_job_type
     assert len(parameters['date']) > 0
     date = parameters.get('date', [])
     at_least_one_date = False
+
     for key in date.keys():
         if date[key]:
             at_least_one_date = True
@@ -72,12 +71,9 @@ def validate_yaml():
 
     approved_distances = {0, 5, 10, 25, 50, 100}
     assert parameters['distance'] in approved_distances
-
     assert len(parameters['positions']) > 0
     assert len(parameters['locations']) > 0
-
     assert len(parameters['uploads']) >= 1 and 'resume' in parameters['uploads']
-
     assert len(parameters['checkboxes']) > 0
 
     checkboxes = parameters.get('checkboxes', [])
@@ -87,8 +83,8 @@ def validate_yaml():
     assert isinstance(checkboxes['urgentFill'], bool)
     assert isinstance(checkboxes['commute'], bool)
     assert isinstance(checkboxes['backgroundCheck'], bool)
+    assert isinstance(checkboxes['securityClearance'], bool)
     assert 'degreeCompleted' in checkboxes
-
     assert isinstance(parameters['universityGpa'], (int, float))
 
     languages = parameters.get('languages', [])
@@ -97,7 +93,6 @@ def validate_yaml():
         assert languages[language].lower() in language_types
 
     experience = parameters.get('experience', [])
-
     for tech in experience:
         assert isinstance(experience[tech], int)
     assert 'default' in experience
@@ -114,7 +109,6 @@ def validate_yaml():
 
     return parameters
 
-
 if __name__ == '__main__':
     parameters = validate_yaml()
     browser = init_browser()
@@ -123,7 +117,3 @@ if __name__ == '__main__':
     bot.login()
     bot.security_check()
     bot.start_applying()
-
-
-
-

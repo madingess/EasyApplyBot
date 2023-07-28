@@ -1,2 +1,0 @@
-class FailedBackendError(Exception):
-    pass
