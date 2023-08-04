@@ -14,7 +14,7 @@ you can even deploy a PowerBI dashboard to monitor the bot's performance using t
 ## How-to Video
 
 To assist you in setting up and using the bot, I have created a helpful video tutorial.
-Watch it here: [YouTube Link](https://youtu.be/-eZJH5EdQr0)
+Watch it here: [YouTube Link](https://youtu.be/IXflenwJzhQ)
 
 ## Setup & Startup
 
@@ -294,7 +294,7 @@ Please make sure to provide the necessary information accurately.
 
 ## Need Further Assistance?
 
-If you are new to Python, I recommend watching the [YouTube](https://youtu.be/-eZJH5EdQr0) video first for a better understanding. If you encounter any
+If you are new to Python, I recommend watching the [YouTube](https://youtu.be/IXflenwJzhQ) video first for a better understanding. If you encounter any
 issues with the code, please raise them in the "Issues" section of this repository. For general inquiries and support,
 feel free to post a comment with a description of your problem under the YouTube video.
 
