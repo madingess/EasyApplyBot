@@ -3,7 +3,7 @@ password: yourpassword
 
 disableAntiLock: False
 
-remote: False
+# remote: False (disabled)
 
 experienceLevel:
  internship: False

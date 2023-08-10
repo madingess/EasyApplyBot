@@ -1,12 +1,12 @@
 import time, random, csv, pyautogui, pdb, traceback, sys
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from datetime import date, datetime
 from itertools import product
-
 
 class LinkedinEasyApply:
     def __init__(self, parameters, driver):
@@ -192,18 +192,14 @@ class LinkedinEasyApply:
                     while retries < max_retries:
                         try:
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-                            job_el.click()
+                            actions = ActionChains(self.browser)
+                            actions.move_to_element(job_el).click().perform()
                             # Perform actions on job_el
                             break  # Exit the loop if successful
+
                         except StaleElementReferenceException:
                             retries += 1
                             continue
-
-
-
-
-                    #job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-                    #job_el.click()
 
                     time.sleep(random.uniform(3, 5))
 
@@ -863,8 +859,9 @@ class LinkedinEasyApply:
     def get_base_search_url(self, parameters):
         remote_url = ""
 
-        if parameters['remote']:
-            remote_url = "f_CF=f_WRA"
+        # Disable remote filter
+        # if parameters['remote']:
+        #    remote_url = "f_CF=f_WRA"
 
         level = 1
         experience_level = parameters.get('experienceLevel', [])

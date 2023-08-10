@@ -9,8 +9,12 @@ from linkedineasyapply import LinkedinEasyApply
 
 def init_browser():
     browser_options = Options()
-    options = ['--disable-blink-features', '--no-sandbox', '--start-maximized', '--disable-extensions',
-               '--ignore-certificate-errors', '--disable-blink-features=AutomationControlled',
+    options = ['--disable-blink-features',
+               '--no-sandbox',
+               '--start-maximized',
+               '--disable-extensions',
+               '--ignore-certificate-errors',
+               '--disable-blink-features=AutomationControlled',
                '--remote-debugging-port=9222']
 
     for option in options:
@@ -30,19 +34,32 @@ def validate_yaml():
         except yaml.YAMLError as exc:
             raise exc
 
-    mandatory_params = ['email', 'password', 'disableAntiLock', 'remote', 'experienceLevel', 'jobTypes', 'date',
-                        'positions', 'locations', 'distance', 'outputFileDirectory', 'checkboxes', 'universityGpa',
-                        'languages', 'experience', 'personalInfo', 'eeo', 'uploads']
+    mandatory_params = ['email',
+                        'password',
+                        'disableAntiLock',
+                        'experienceLevel',
+                        'jobTypes',
+                        'date',
+                        'positions',
+                        'locations',
+                        'distance',
+                        'outputFileDirectory',
+                        'checkboxes',
+                        'universityGpa',
+                        'languages',
+                        'experience',
+                        'personalInfo',
+                        'eeo',
+                        'uploads'] # removed 'remote' from mandatory_params
 
     for mandatory_param in mandatory_params:
         if mandatory_param not in parameters:
-            raise Exception(mandatory_param + ' is not inside the yml file!')
+            raise Exception(mandatory_param + ' is not defined in the config.yaml file!')
 
     assert validate_email(parameters['email'])
     assert len(str(parameters['password'])) > 0
     assert isinstance(parameters['disableAntiLock'], bool)
-    assert isinstance(parameters['remote'], bool)
-
+    # assert isinstance(parameters['remote'], bool)
     assert len(parameters['experienceLevel']) > 0
     experience_level = parameters.get('experienceLevel', [])
     at_least_one_experience = False
