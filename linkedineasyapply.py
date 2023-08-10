@@ -1,5 +1,6 @@
 import time, random, csv, pyautogui, pdb, traceback, sys
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -186,8 +187,22 @@ class LinkedinEasyApply:
                     poster.lower() not in [word.lower() for word in self.poster_blacklist] and \
                     contains_blacklisted_keywords is False and link not in self.seen_jobs:
                 try:
-                    job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-                    job_el.click()
+                    max_retries = 3
+                    retries = 0
+                    while retries < max_retries:
+                        try:
+                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                            # Perform actions on job_el
+                            break  # Exit the loop if successful
+                        except StaleElementReferenceException:
+                            retries += 1
+                            continue
+
+
+
+
+                    #job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                    #job_el.click()
 
                     time.sleep(random.uniform(3, 5))
 
@@ -443,7 +458,7 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Mobile Phone Number']
                     elif 'linkedin' in question_text:
                         to_enter = self.personal_info['Linkedin']
-                    elif 'message to hiring' in question_text:
+                    elif 'message to hiring' in question_text or 'cover letter' in question_text:
                         to_enter = self.personal_info['MessageToManager']
                     elif 'website' in question_text or 'github' in question_text or 'portfolio' in question_text:
                         to_enter = self.personal_info['Website']
@@ -508,6 +523,23 @@ class LinkedinEasyApply:
                                 break
 
                         self.select_dropdown(dropdown_field, proficiency)
+
+                    elif 'clearance' in question_text:
+                        answer = self.get_answer('securityClearance')
+
+                        choice = ""
+                        for option in options:
+                            if answer == 'yes':
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+
+                        if choice == "":
+                            choice = options[len(options) - 1]
+
+                        self.select_dropdown(dropdown_field, choice)
+
                     elif 'assessment' in question_text:
                         answer = self.get_answer('assessment')
 
