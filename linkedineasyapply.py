@@ -192,6 +192,7 @@ class LinkedinEasyApply:
                     while retries < max_retries:
                         try:
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                            job_el.click()
                             # Perform actions on job_el
                             break  # Exit the loop if successful
                         except StaleElementReferenceException:
