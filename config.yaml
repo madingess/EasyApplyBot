@@ -99,6 +99,8 @@ checkboxes:
  drugTest: True
  # Are you willing to complete an assessment? (yes/no checkbox)
  assessment: True
+ # Do you have security clearance of [xxx] country? (yes/no checkbox)
+ securityClearance: False
  # Have you completed the following level of education: DEGREE TYPE? (yes/no checkbox)
  degreeCompleted:
   # - High School Diploma
