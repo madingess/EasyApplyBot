@@ -1,10 +1,14 @@
+# Add your LinkedIn email ID and password. WARNING: KEEP THIS OFFLINE ON YOUR PC AND DO NOT COMMIT/UPLOAD.
 email: email@domain.com
 password: yourpassword
 
+# Anti-lock default is False to prevent your PC from sleeping to allow bot to run uninterrupted.
+# Set it to True if you wish to disable this functionality.
 disableAntiLock: False
 
-# remote: False (disabled)
+# remote: False (disabled, add as a location instead)
 
+# Set to True or False to suit your preference.
 experienceLevel:
  internship: False
  entry: True
@@ -13,6 +17,7 @@ experienceLevel:
  director: False
  executive: False
 
+# Set to True or False to suit your preference.
 jobTypes:
  full-time: True
  contract: True
@@ -22,39 +27,51 @@ jobTypes:
  other: False
  volunteer: False
 
+# Set ONLY one as True to suit your preference.
 date:
  all time: True
  month: False
  week: False
  24 hours: False
 
+# Remove hash sign to add positions. You can add as many as you need.
 positions:
  #- First position
  #- A second position
  #- A third position
  #- ...
+
+# Remove hash sign to add locations. You can add as many as you need including adding 'Remote' as a location.
 locations:
  #- First location
  #- A second location
  #- A third location
  #- ...
  - Remote
+
+# Distance from the location added above. Allowed values {0, 5, 10, 25, 50, 100}
 distance: 25
 
+# Optional directory to save logs, does not work sometimes.
 outputFileDirectory: ~/Documents/Applications/EasyApplyBot/EasyApplyBot/
 
+# Companies you don't want to apply.
 companyBlacklist:
  #- company
  #- company2
 
+# Jobs you want to avoid applying. Use it to refine performance of bot.
 titleBlacklist:
  #- word1
  #- word2
 
+# Bot will not apply to jobs posted by black listed people.
 posterBlacklist:
  #- name1
  #- name2
 
+# Path to your CV/resume and cover letter (remove hash sign). These paths often don't work
+# so apply one job manually once, bot will manually uploaded CV for automating the task.
 uploads:
  resume: C:\Users\myDirectory\Resume.pdf
  # Cover letter is optional

@@ -21,11 +21,10 @@ Watch it here: [YouTube Link](https://youtu.be/IXflenwJzhQ)
 _Note: For detailed step-by-step explanation of `config.yaml`, see "Appendix: Step-by-step guide to config.yaml" at
 the bottom._
 
-1. Start by configuring the `config.yaml` file. This is a one-time setup and contains the necessary inputs for running
-2. the bot. Take care not to change the formatting or add spaces in the file. Detailed explanations for each input can
-3. be found in the comments within `config.yaml`.
-4. After configuring the file, install the dependencies listed in `requirements.txt`.
-5. Finally, run the bot using your preferred method:
+1. Start by configuring the `config.yaml` file. This is a one-time setup and contains the necessary inputs for running the bot.
+2. Take care not to change the formatting or add spaces in the file. Detailed explanations for each input can be found in the comments within `config.yaml`.
+3. After configuring the file, install the dependencies listed in `requirements.txt`.
+4Finally, run the bot using your preferred method:
     - If using an IDE like PyCharm Community Edition, execute `main.py` from your IDE.
     - If using the command line or terminal, activate the virtual environment with `source venv/bin/activate`, then
       run `python3 main.py`.
@@ -63,7 +62,7 @@ password: yourpassword
 disableAntiLock: False
 ```
 
-Set `remote` to `True` if you want to apply for remote jobs only.
+This setting is disabled: ~~Set `remote` to `True` if you want to apply for remote jobs only.~~
 ```yaml
 remote: False
 ```
