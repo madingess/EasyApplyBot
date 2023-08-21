@@ -26,8 +26,8 @@ Check it out on [YouTube](https://youtu.be/IXflenwJzhQ).
 If you are new to Python, please watch this [video first](https://youtu.be/IXflenwJzhQ).
 
 1. Start by configuring the `config.yaml` file. This is a one-time setup and contains the necessary inputs for running
-   the bot. Necessary help is documented within the `config.yaml`.
-2. Please maintain the formatting and avoid adding unnecessary spaces in the file.
+   the bot. Necessary help is documented within the `config.yaml`. Please maintain the formatting and avoid adding
+   unnecessary spaces in the file.
 3. After configuring the file, install the dependencies listed in `requirements.txt`.
 
    Now, you're ready to launch the bot using your preferred method:
