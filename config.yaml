@@ -6,9 +6,10 @@ password: yourpassword
 # Set it to True if you wish to disable this functionality.
 disableAntiLock: False
 
-# remote: False (disabled, add as a location instead)
+# Set to True if you wish to search for remote jobs only.
+remote: False
 
-# Set to True or False to suit your preference.
+# Set to True or False to suit your preference. Multiple True allowed.
 experienceLevel:
  internship: False
  entry: True
@@ -17,7 +18,7 @@ experienceLevel:
  director: False
  executive: False
 
-# Set to True or False to suit your preference.
+# Set to True or False to suit your preference. Multiple True allowed.
 jobTypes:
  full-time: True
  contract: True
@@ -34,25 +35,25 @@ date:
  week: False
  24 hours: False
 
-# Remove hash sign to add positions. You can add as many as you need.
+# Remove hash sign to add positions. You can add as many as you need, but preserve formatting
 positions:
  #- First position
  #- A second position
  #- A third position
  #- ...
 
-# Remove hash sign to add locations. You can add as many as you need including adding 'Remote' as a location.
+# Remove hash sign to add locations. You can add as many as you need including adding 'Remote' as a location but first location must be a valid country.
 locations:
  #- First location
  #- A second location
  #- A third location
  #- ...
- - Remote
+ #- Remote
 
-# Distance from the location added above. Allowed values {0, 5, 10, 25, 50, 100}
+# Distance from the location added above. Allowed values are {0, 5, 10, 25, 50, 100}, use only one.
 distance: 25
 
-# Optional directory to save logs, does not work sometimes.
+# Optional directory to save logs, does not work sometimes. Does not work sometimes, so leave it unchanged.
 outputFileDirectory: ~/Documents/Applications/EasyApplyBot/EasyApplyBot/
 
 # Companies you don't want to apply.
@@ -60,7 +61,7 @@ companyBlacklist:
  #- company
  #- company2
 
-# Jobs you want to avoid applying. Use it to refine performance of bot.
+# Job titles you want to avoid applying. Use it to refine performance of bot.
 titleBlacklist:
  #- word1
  #- word2
@@ -71,7 +72,8 @@ posterBlacklist:
  #- name2
 
 # Path to your CV/resume and cover letter (remove hash sign). These paths often don't work
-# so apply one job manually once, bot will manually uploaded CV for automating the task.
+# so apply one job manually once, bot will reuse manually uploaded CV for automating the task.
+# Note: Prefer a path without spaces, i.e. instead of "Me My" to "MeMy" or "Me_My".
 uploads:
  resume: C:\Users\myDirectory\Resume.pdf
  # Cover letter is optional
@@ -101,7 +103,7 @@ checkboxes:
  assessment: True
  # Do you have security clearance of [xxx] country? (yes/no checkbox)
  securityClearance: False
- # Have you completed the following level of education: DEGREE TYPE? (yes/no checkbox)
+ # Have you completed the following level of education: DEGREE TYPE? Remove applicable # signs (yes/no checkbox)
  degreeCompleted:
   # - High School Diploma
   # - Bachelor's Degree
@@ -122,13 +124,16 @@ salaryMinimum: 35000
 
 # ------------ Additional parameters: languages ---------------
 languages:
- english: Native or bilingual # None, Conversational, Professional, Native or bilingual
+ english: Native or bilingual # Allowed choices { None, Conversational, Professional, Native or bilingual }
+ # arabic:
+ # french:
 
 # ------------ Additional parameters: noticePeriod in weeks ---------------
 noticePeriod: 8
 
 # ------------ Additional parameters: years of experience ---------------
 # How many years of work experience do you have ...? (whole numbers only)
+# You may add more skills depending on your industry or profession at the bottom.
 experience:
  # normal ones
  Accounting/Auditing: 0
@@ -171,20 +176,20 @@ experience:
  PowerPoint: 0
  Word: 0
  SQL Server: 0
- communication: 0
- financial markets: 0
- business: 0
- financial services: 0
- team leadership: 0
- cash flow: 0
- hedging: 0
- treasury services: 0
- microsoft power bi: 0
- accounting: 0
- auditing: 0
- financial modeling: 0
- budgeting & forecasting: 0
- fp&a: 0
+ Communication: 0
+ Financial markets: 0
+ Business: 0
+ Financial services: 0
+ Team leadership: 0
+ Cash flow: 0
+ Hedging: 0
+ Treasury services: 0
+ Microsoft Power BI: 0
+ Accounting: 0
+ Auditing: 0
+ Financial modeling: 0
+ Budgeting & forecasting: 0
+ FP&A: 0
  PQE: 0
  Training & Development: 0
  #python: 0

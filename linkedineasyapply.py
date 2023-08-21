@@ -21,7 +21,7 @@ class LinkedinEasyApply:
         self.locations = parameters.get('locations', [])
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
-        self.file_name = "output"
+        self.file_name = "output_"
         self.unprepared_questions_file_name = "unprepared_questions"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
@@ -192,15 +192,17 @@ class LinkedinEasyApply:
                     while retries < max_retries:
                         try:
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-                            job_el.click()
-                            break  # Exit the loop if successful
 
-                            # Disabled, bot going too fast
-                            # job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                            # Default click action, comment to use alternative
+                            job_el.click()
+
+                            # Alternative click method slightly speeds up but could be problematic
+                            # comment default click action and uncomment 'actions' lines
                             # actions = ActionChains(self.browser)
                             # actions.move_to_element(job_el).click().perform()
-                            # Perform actions on job_el
-                            # break  # Exit the loop if successful
+
+                            # Exit the loop if successful
+                            break
 
                         except StaleElementReferenceException:
                             retries += 1
@@ -216,7 +218,7 @@ class LinkedinEasyApply:
                             print('Already applied to the job!')
                     except:
                         temp = self.file_name
-                        self.file_name = "failed"
+                        self.file_name = "failed_"
                         print("Failed to apply to job! Please submit a bug report with this link: " + link)
                         print("Writing to the failed csv file...")
                         try:
@@ -865,8 +867,9 @@ class LinkedinEasyApply:
         remote_url = ""
 
         # Disable remote filter
-        # if parameters['remote']:
-        #    remote_url = "f_CF=f_WRA"
+        if parameters['remote']:
+           remote_url = "&f_WT=2"
+            # TO DO: Others &f_WT= options { WT=1, WT=2, WT=3, f_WT=1%2C2%2C3 }
 
         level = 1
         experience_level = parameters.get('experienceLevel', [])
@@ -892,7 +895,7 @@ class LinkedinEasyApply:
                 date_url = dates[key]
                 break
 
-        easy_apply_url = "&f_LF=f_AL"
+        easy_apply_url = "&f_AL=true"
 
         extra_search_terms = [distance_url, remote_url, job_types_url, experience_url]
         extra_search_terms_str = '&'.join(

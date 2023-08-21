@@ -37,6 +37,7 @@ def validate_yaml():
     mandatory_params = ['email',
                         'password',
                         'disableAntiLock',
+                        'remote',
                         'experienceLevel',
                         'jobTypes',
                         'date',
@@ -50,7 +51,7 @@ def validate_yaml():
                         'experience',
                         'personalInfo',
                         'eeo',
-                        'uploads'] # removed 'remote' from mandatory_params
+                        'uploads']
 
     for mandatory_param in mandatory_params:
         if mandatory_param not in parameters:
@@ -59,7 +60,7 @@ def validate_yaml():
     assert validate_email(parameters['email'])
     assert len(str(parameters['password'])) > 0
     assert isinstance(parameters['disableAntiLock'], bool)
-    # assert isinstance(parameters['remote'], bool)
+    assert isinstance(parameters['remote'], bool)
     assert len(parameters['experienceLevel']) > 0
     experience_level = parameters.get('experienceLevel', [])
     at_least_one_experience = False
