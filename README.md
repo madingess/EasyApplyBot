@@ -18,8 +18,14 @@ Notably, I've added the option to log application submission dates and times for
 
 ## 🎥 How-to Video
 
-For your convenience, I've created a comprehensive video tutorial to guide you through the setup and usage of the bot.
+Setting-up the bot:
+
+* For your convenience, I've created a comprehensive video tutorial to guide you through the setup and usage of the bot.
 Check it out on [YouTube](https://youtu.be/IXflenwJzhQ).
+
+Setting-up the optional monitoring dashboard (Sep-23 update):
+
+* If you wish to setup the optional bot monitoring dashboard using PowerBI then watch [this YouTube video.](https://youtu.be/4LH8WTrMCxw)
 
 ## 🛠️ Setup & Launch
 
