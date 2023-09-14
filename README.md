@@ -67,6 +67,13 @@ executing `python3 main.py` to initiate the bot.
    leading to potential infinite loops. The solution is to close such a job, allowing the bot to progress to the next
    item in the queue.
 
+6. If bot is stuck in a weird one-off question, then simply click on [x] to close the job application. Bot will proceed
+   to next job in the queue.
+   
+7.  Some employers add human checks like enter the sum of 2 + 7 (or x + y) and other really one-off questions. The bot
+    cannot be trained to answer those questions. It is suggested to add such employers to the `companyBlacklist:` in
+    `config.yaml` so the bot continues its job without hindrance.
+
 ## 🆘❓Need Further Assistance?
 
 If you're new to Python, I recommend watching the [YouTube](https://youtu.be/IXflenwJzhQ) video for a comprehensive
