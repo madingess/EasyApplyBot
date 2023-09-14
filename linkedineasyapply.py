@@ -471,8 +471,7 @@ class LinkedinEasyApply:
                             to_enter = int(self.notice_period)
                         else:
                             to_enter = str(self.notice_period)
-                    elif ('salary' in question_text or 'expectation' in question_text or 'compensation'
-                          `in question_text or 'CTC' in question_text):
+                    elif 'salary' in question_text or 'expectation' in question_text or 'compensation' in question_text or 'CTC' in question_text:
                         if text_field_type == 'numeric':
                             to_enter = int(self.salary_minimum)
                         else:
