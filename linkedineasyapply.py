@@ -856,11 +856,15 @@ class LinkedinEasyApply:
 
     def get_base_search_url(self, parameters):
         remote_url = ""
+        lessthanTenApplicants_url = ""
 
         # Disable remote filter
         if parameters['remote']:
             remote_url = "&f_WT=2"
             # TO DO: Others &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
+
+        if parameters['lessthanTenApplicants']:
+            lessthanTenApplicants_url = "&f_EA=true"
 
         level = 1
         experience_level = parameters.get('experienceLevel', [])
@@ -888,7 +892,7 @@ class LinkedinEasyApply:
 
         easy_apply_url = "&f_AL=true"
 
-        extra_search_terms = [distance_url, remote_url, job_types_url, experience_url]
+        extra_search_terms = [distance_url, remote_url, lessthanTenApplicants_url, job_types_url, experience_url]
         extra_search_terms_str = '&'.join(
             term for term in extra_search_terms if len(term) > 0) + easy_apply_url + date_url
 

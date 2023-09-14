@@ -61,6 +61,7 @@ def validate_yaml():
     assert len(str(parameters['password'])) > 0
     assert isinstance(parameters['disableAntiLock'], bool)
     assert isinstance(parameters['remote'], bool)
+    assert isinstance(parameters['lessthanTenApplicants'], bool)
     assert len(parameters['experienceLevel']) > 0
     experience_level = parameters.get('experienceLevel', [])
     at_least_one_experience = False
