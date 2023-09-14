@@ -32,7 +32,7 @@ class LinkedinEasyApply:
         self.checkboxes = parameters.get('checkboxes', [])
         self.university_gpa = parameters['universityGpa']
         self.salary_minimum = parameters['salaryMinimum']
-        self.notice_period = float(parameters['noticePeriod'])
+        self.notice_period = int(parameters['noticePeriod'])
         self.languages = parameters.get('languages', [])
         self.experience = parameters.get('experience', [])
         self.personal_info = parameters.get('personalInfo', [])
@@ -371,7 +371,7 @@ class LinkedinEasyApply:
                         answer = self.get_answer('legallyAuthorized')
                     elif 'urgent' in radio_text:
                         answer = self.get_answer('urgentFill')
-                    elif 'commut' in radio_text:
+                    elif 'commut' in radio_text or 'on-site' in radio_text:
                         answer = self.get_answer('commute')
                     elif 'remote' in radio_text:
                         answer = self.get_answer('remote')
@@ -438,7 +438,7 @@ class LinkedinEasyApply:
                         raise Exception("Could not determine input type of input field!")
 
                     to_enter = ''
-                    if 'experience' in question_text:
+                    if 'experience' in question_text or 'how many years in' in question_text:
                         no_of_years = None
                         for experience in self.experience:
                             if experience.lower() in question_text:
@@ -468,24 +468,16 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['Website']
                     elif 'notice' in question_text or 'weeks' in question_text:
                         if text_field_type == 'numeric':
-                            to_enter = float(self.notice_period)
+                            to_enter = int(self.notice_period)
                         else:
                             to_enter = str(self.notice_period)
-                    elif 'salary' in question_text:
+                    elif ('salary' in question_text or 'expectation' in question_text or 'compensation'
+                          `in question_text or 'CTC' in question_text):
                         if text_field_type == 'numeric':
-                            to_enter = float(self.salary_minimum)  # convert to float
+                            to_enter = int(self.salary_minimum)
                         else:
-                            to_enter = str(self.salary_minimum)
-                    elif 'salary expectation' in question_text:
-                        if text_field_type == 'numeric':
                             to_enter = float(self.salary_minimum)
-                        else:
-                            to_enter = str(self.salary_minimum)
-                    else:
-                        if text_field_type == 'numeric':
-                            to_enter = 0
-                        else:
-                            to_enter = " ‏‏‎ "
+
                         self.record_unprepared_question(text_field_type, question_text)
 
                     if text_field_type == 'numeric':
@@ -559,7 +551,7 @@ class LinkedinEasyApply:
                             choice = options[len(options) - 1]
 
                         self.select_dropdown(dropdown_field, choice)
-                    elif 'commut' in question_text:
+                    elif 'commut' in question_text or 'on-site' in question_text:
                         answer = self.get_answer('commute')
 
                         choice = ""
@@ -868,8 +860,8 @@ class LinkedinEasyApply:
 
         # Disable remote filter
         if parameters['remote']:
-           remote_url = "&f_WT=2"
-            # TO DO: Others &f_WT= options { WT=1, WT=2, WT=3, f_WT=1%2C2%2C3 }
+            remote_url = "&f_WT=2"
+            # TO DO: Others &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
 
         level = 1
         experience_level = parameters.get('experienceLevel', [])
