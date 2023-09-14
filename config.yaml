@@ -9,8 +9,8 @@ disableAntiLock: False
 # Set to True if you wish to search for remote jobs only.
 remote: False
 
-# Set to True if you wish to search for jobs marked as "under 10 applicants".
-lessthanTenApplicants: True
+# Set to True if you wish to search for jobs marked as "under 10 applicants" (default is False).
+lessthanTenApplicants: False
 
 # Set to True or False to suit your preference. Multiple True allowed.
 experienceLevel:
