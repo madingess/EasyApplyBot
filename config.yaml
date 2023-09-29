@@ -53,8 +53,11 @@ locations:
  #- ...
  #- Remote
 
+# Set to True if you are residing in the country of job
+residentStatus: False
+
 # Distance from the location added above. Allowed values are {0, 5, 10, 25, 50, 100}, use only one.
-distance: 25
+distance: 100
 
 # Optional directory to save logs, does not work sometimes. Does not work sometimes, so leave it unchanged.
 outputFileDirectory: ~/Documents/Applications/EasyApplyBot/EasyApplyBot/
@@ -202,6 +205,7 @@ experience:
 
 # ------------ Additional parameters: personal info ---------------
 personalInfo:
+ Pronouns: Mr.
  First Name: FirstName
  Last Name: LastName
  Phone Country Code: Canada (+1) # See linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
@@ -212,8 +216,7 @@ personalInfo:
  Zip: YourZip/Postal
  Linkedin: https://www.linkedin.com/in/my-linkedin-profile
  Website: https://www.my-website.com # github/website is interchangeable here
- MessageToManager: "Hi, I am a qualified professional with well decorated career and diversified experience. 
-  Please have a look at my resume. Thanks." # Keep message short and within the quotes. This is a testing feature and may not work.
+ MessageToManager: "Hi, I am interested to join your organization. Please have a look at my resume. Thank you." # Keep message short and within the quotes. This is a testing feature and may not work.
 
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:

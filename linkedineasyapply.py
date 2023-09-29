@@ -19,6 +19,7 @@ class LinkedinEasyApply:
         self.poster_blacklist = parameters.get('posterBlacklist', []) or []
         self.positions = parameters.get('positions', [])
         self.locations = parameters.get('locations', [])
+        self.residency = parameters.get('residentStatus', [])
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
         self.file_name = "output_"
@@ -63,7 +64,7 @@ class LinkedinEasyApply:
         random.shuffle(searches)
 
         page_sleep = 0
-        minimum_time = 60 * 15
+        minimum_time = 60 * 15 # minimum time bot should run before taking a break
         minimum_page_time = time.time() + minimum_time
 
         for (position, location) in searches:
@@ -89,7 +90,7 @@ class LinkedinEasyApply:
                         time.sleep(time_left)
                         minimum_page_time = time.time() + minimum_time
                     if page_sleep % 5 == 0:
-                        sleep_time = random.randint(500, 900)
+                        sleep_time = random.randint(180, 300) # Changed from 500, 900 {seconds}
                         print("Sleeping for " + str(sleep_time / 60) + " minutes.")
                         time.sleep(sleep_time)
                         page_sleep += 1
@@ -275,7 +276,19 @@ class LinkedinEasyApply:
                 next_button.click()
                 time.sleep(random.uniform(3.0, 5.0))
 
-                if 'please enter a valid answer' in self.browser.page_source.lower() or 'file is required' in self.browser.page_source.lower():
+                # Newer error handling
+                error_messages = [
+                    'please enter a valid answer',
+                    'enter a decimal number',
+                    'file is required',
+                    'please make a selection',
+                    'select checkbox to proceed',
+                    'saisissez un numéro whole',
+                    '请输入whole编号',
+                    'Numéro de téléphone',
+                ]
+
+                if any(error in self.browser.page_source.lower() for error in error_messages):
                     raise Exception("Failed answering required questions or uploading required files.")
             except:
                 traceback.print_exc()
@@ -359,38 +372,55 @@ class LinkedinEasyApply:
 
                         if answer == "":
                             answer = radio_options[len(radio_options) - 1]
+
                     elif 'assessment' in radio_text:
                         answer = self.get_answer("assessment")
+
                     elif 'clearance' in radio_text:
                         answer = self.get_answer("securityClearance")
+
                     elif 'north korea' in radio_text:
                         answer = 'no'
+
                     elif 'previously employ' in radio_text or 'previous employ' in radio_text:
                         answer = 'no'
+
                     elif 'authorized' in radio_text or 'authorised' in radio_text or 'legally' in radio_text:
                         answer = self.get_answer('legallyAuthorized')
+
                     elif 'urgent' in radio_text:
                         answer = self.get_answer('urgentFill')
-                    elif 'commut' in radio_text or 'on-site' in radio_text:
+
+                    elif 'commut' in radio_text or 'on-site' in radio_text or 'hybrid' in radio_text or 'onsite' in radio_text:
                         answer = self.get_answer('commute')
+
                     elif 'remote' in radio_text:
                         answer = self.get_answer('remote')
+
                     elif 'background check' in radio_text:
                         answer = self.get_answer('backgroundCheck')
+
                     elif 'drug test' in radio_text:
                         answer = self.get_answer('drugTest')
+
+                    elif 'currently living' in radio_text or 'currently reside' in radio_text:
+                        answer = self.get_answer('residency')
+
                     elif 'level of education' in radio_text:
                         for degree in self.checkboxes['degreeCompleted']:
                             if degree.lower() in radio_text:
                                 answer = "yes"
                                 break
+
                     elif 'experience' in radio_text:
                         for experience in self.experience:
                             if experience.lower() in radio_text:
                                 answer = "yes"
                                 break
+
                     elif 'data retention' in radio_text:
                         answer = 'no'
+
                     elif 'sponsor' in radio_text:
                         answer = self.get_answer('requireVisa')
                     else:
@@ -413,6 +443,7 @@ class LinkedinEasyApply:
                         continue
                 except:
                     pass
+
                 # Questions check
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
@@ -448,35 +479,45 @@ class LinkedinEasyApply:
                             self.record_unprepared_question(text_field_type, question_text)
                             no_of_years = int(self.experience_default)
                         to_enter = no_of_years
+
                     elif 'grade point average' in question_text:
                         to_enter = self.university_gpa
+
                     elif 'first name' in question_text:
                         to_enter = self.personal_info['First Name']
+
                     elif 'last name' in question_text:
                         to_enter = self.personal_info['Last Name']
+
                     elif 'name' in question_text:
                         to_enter = self.personal_info['First Name'] + " " + self.personal_info['Last Name']
+
                     elif 'pronouns' in question_text:
-                        to_enter = self.personal_info['Pronouns']
+                       to_enter = self.personal_info['Pronouns']
+
                     elif 'phone' in question_text:
                         to_enter = self.personal_info['Mobile Phone Number']
+
                     elif 'linkedin' in question_text:
                         to_enter = self.personal_info['Linkedin']
+
                     elif 'message to hiring' in question_text or 'cover letter' in question_text:
                         to_enter = self.personal_info['MessageToManager']
+
                     elif 'website' in question_text or 'github' in question_text or 'portfolio' in question_text:
                         to_enter = self.personal_info['Website']
+
                     elif 'notice' in question_text or 'weeks' in question_text:
                         if text_field_type == 'numeric':
                             to_enter = int(self.notice_period)
                         else:
                             to_enter = str(self.notice_period)
+
                     elif 'salary' in question_text or 'expectation' in question_text or 'compensation' in question_text or 'CTC' in question_text:
                         if text_field_type == 'numeric':
                             to_enter = int(self.salary_minimum)
                         else:
                             to_enter = float(self.salary_minimum)
-
                         self.record_unprepared_question(text_field_type, question_text)
 
                     if text_field_type == 'numeric':
@@ -489,6 +530,7 @@ class LinkedinEasyApply:
                     continue
                 except:
                     pass
+
                 # Date Check
                 try:
                     date_picker = el.find_element(By.CLASS_NAME, 'artdeco-datepicker__input ')
@@ -500,6 +542,7 @@ class LinkedinEasyApply:
                     continue
                 except:
                     pass
+
                 # Dropdown check
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
@@ -511,12 +554,10 @@ class LinkedinEasyApply:
 
                     if 'proficiency' in question_text:
                         proficiency = "Conversational"
-
                         for language in self.languages:
                             if language.lower() in question_text:
                                 proficiency = self.languages[language]
                                 break
-
                         self.select_dropdown(dropdown_field, proficiency)
 
                     elif 'clearance' in question_text:
@@ -529,15 +570,12 @@ class LinkedinEasyApply:
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-
                         if choice == "":
-                            choice = options[len(options) - 1]
-
+                            self.record_unprepared_question(text_field_type, question_text)
                         self.select_dropdown(dropdown_field, choice)
 
                     elif 'assessment' in question_text:
                         answer = self.get_answer('assessment')
-
                         choice = ""
                         for option in options:
                             if answer == 'yes':
@@ -545,12 +583,11 @@ class LinkedinEasyApply:
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-
-                        if choice == "":
-                            choice = options[len(options) - 1]
-
+                        #if choice == "":
+                        #    choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
-                    elif 'commut' in question_text or 'on-site' in question_text:
+
+                    elif 'commut' in question_text or 'on-site' in question_text or 'hybrid' in question_text or 'onsite' in question_text :
                         answer = self.get_answer('commute')
 
                         choice = ""
@@ -560,58 +597,60 @@ class LinkedinEasyApply:
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-
-                        if choice == "":
-                            choice = options[len(options) - 1]
-
+                        #if choice == "":
+                        #    choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'country code' in question_text:
                         self.select_dropdown(dropdown_field, self.personal_info['Phone Country Code'])
+
                     elif 'north korea' in question_text:
-
                         choice = ""
-
                         for option in options:
                             if 'no' in option.lower():
                                 choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'previously employed' in question_text or 'previous employment' in question_text:
-
                         choice = ""
-
                         for option in options:
                             if 'no' in option.lower():
                                 choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'sponsor' in question_text:
                         answer = self.get_answer('requireVisa')
-
                         choice = ""
-
                         for option in options:
                             if answer == 'yes':
                                 choice = option
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
+                    elif 'currently living' in question_text or 'currently reside' in question_text:
+                        answer = self.get_answer('residency')
+                        choice = ""
+                        for option in options:
+                            if answer == 'yes':
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+                        if choice == "":
+                            choice = options[len(options) - 1]
+                        self.select_dropdown(dropdown_field, choice)
+
                     elif 'authorized' in question_text or 'authorised' in question_text:
                         answer = self.get_answer('legallyAuthorized')
-
                         choice = ""
-
                         for option in options:
                             if answer == 'yes':
                                 # find some common words
@@ -619,56 +658,47 @@ class LinkedinEasyApply:
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'citizenship' in question_text:
                         answer = self.get_answer('legallyAuthorized')
-
                         choice = ""
-
                         for option in options:
                             if answer == 'yes':
                                 if 'no' in option.lower():
                                     choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'clearance' in question_text:
                         answer = self.get_answer('clearance')
-
                         choice = ""
-
                         for option in options:
                             if answer == 'yes':
-                                # find some common words
                                 choice = option
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
 
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'gender' in question_text or 'veteran' in question_text or 'race' in question_text or 'disability' in question_text or 'latino' in question_text:
-
                         choice = ""
-
                         for option in options:
                             if 'prefer' in option.lower() or 'decline' in option.lower() or 'don\'t' in option.lower() or 'specified' in option.lower() or 'none' in option.lower():
                                 choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
                     elif 'email' in question_text:
                         continue  # assume email address is filled in properly by default
+
                     elif 'experience' in question_text or 'understanding' in question_text or 'familiar' in question_text or 'comfortable' in question_text or 'able to' in question_text:
                         answer = 'no'
                         for experience in self.experience:
@@ -685,18 +715,15 @@ class LinkedinEasyApply:
                                 choice = option
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
+
                     else:
                         choice = ""
-
                         for option in options:
                             if 'yes' in option.lower():
                                 choice = option
-
                         if choice == "":
                             choice = options[len(options) - 1]
-
                         self.select_dropdown(dropdown_field, choice)
                         self.record_unprepared_question("dropdown", question_text)
                     continue
@@ -706,9 +733,7 @@ class LinkedinEasyApply:
                 # Checkbox check for agreeing to terms and service
                 try:
                     question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-
                     clickable_checkbox = question.find_element(By.TAG_NAME, 'label')
-
                     clickable_checkbox.click()
                 except:
                     pass
