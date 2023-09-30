@@ -884,7 +884,7 @@ class LinkedinEasyApply:
         lessthanTenApplicants_url = ""
 
         # Disable remote filter
-        if parameters['remote']:
+        if parameters.get('remote', False):
             remote_url = "&f_WT=2"
             # TO DO: Others &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
 
