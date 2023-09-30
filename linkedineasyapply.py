@@ -155,7 +155,7 @@ class LinkedinEasyApply:
             except:
                 pass
             try:
-                company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__company-name').text
+                company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text
             except:
                 pass
             try:
