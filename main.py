@@ -22,6 +22,7 @@ def init_browser():
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=browser_options)
+    driver.implicitly_wait(1) # wait time in seconds to allow loading of elements
     driver.set_window_position(0, 0)
     driver.maximize_window()
     return driver

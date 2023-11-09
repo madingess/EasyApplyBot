@@ -310,6 +310,12 @@ class LinkedinEasyApply:
             closed_notification = True
         except:
             pass
+        try:
+            self.browser.find_element(By.CSS_SELECTOR, 'button[data-control-name="save_application_btn"]').click()
+            closed_notification = True
+        except:
+            pass
+
         time.sleep(random.uniform(3, 5))
 
         if closed_notification is False:
@@ -403,7 +409,7 @@ class LinkedinEasyApply:
                     elif 'drug test' in radio_text:
                         answer = self.get_answer('drugTest')
 
-                    elif 'currently living' in radio_text or 'currently reside' in radio_text:
+                    elif 'currently living' in radio_text or 'currently reside' in radio_text or 'right to live' in radio_text:
                         answer = self.get_answer('residency')
 
                     elif 'level of education' in radio_text:
@@ -764,7 +770,7 @@ class LinkedinEasyApply:
                         elif 'required' in upload_type.text.lower():
                             upload_button.send_keys(self.resume_dir)
         except:
-            print("Failed to upload resume or cover letter!")
+            # print("Failed to upload resume or cover letter!")
             pass
 
     def enter_text(self, element, text):
@@ -883,9 +889,10 @@ class LinkedinEasyApply:
         remote_url = ""
         lessthanTenApplicants_url = ""
 
-        # Disable remote filter
-        if parameters.get('remote', False):
+        if parameters.get('remote'):
             remote_url = "&f_WT=2"
+        else:
+            remote_url = ""
             # TO DO: Others &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
 
         if parameters['lessthanTenApplicants']:
