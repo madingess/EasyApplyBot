@@ -25,7 +25,7 @@ Check it out on [YouTube](https://youtu.be/IXflenwJzhQ).
 
 Setting-up the optional monitoring dashboard (Sep-23 update):
 
-* If you wish to setup the optional bot monitoring dashboard using PowerBI then watch [this YouTube video.](https://youtu.be/4LH8WTrMCxw)
+* If you wish to set up the optional bot monitoring dashboard using PowerBI then watch [this YouTube video.](https://youtu.be/4LH8WTrMCxw)
 
 ## 🛠️ Setup & Launch
 
@@ -48,31 +48,10 @@ executing `python3 main.py` to initiate the bot.
 
 ### 🐞🔧 Known Issues & Resolutions
 
-~~1. Sometimes, the bot may get stuck in an endless loop of opening external links. This occurs when two specific
-   conditions are met: First, the bot encounters a page with text like "no matching jobs found for(...)," and second,
-   LinkedIn suggests "Jobs you may be interested in..." along with links to external websites. To resolve this, either
-   click on the next Easy Apply job from the suggestions or modify the search keywords while the bot is active. If all
-   else fails, restarting the bot is an option.~~
-
-~~2. Random "stale element" errors have been fixed.~~
-
-~~3. Resolved issue with remote filter change in URL.~~
-
-4. In some cases, integrated development environments (IDEs) such as PyCharm might conflict with the included virtual
+1. In some cases, integrated development environments (IDEs) such as PyCharm might conflict with the included virtual
    environment (venv) in this project. To address this, you can delete the `venv` folder and configure the Python
    interpreter to use the "local" option. Furthermore, installing the dependencies from `requirements.txt` ensures a
    successful run of `main.py`.
-
-~~5. The bot occasionally struggles with providing accurate or complete responses to questions in non-English job posts,
-   leading to potential infinite loops. The solution is to close such a job, allowing the bot to progress to the next
-   item in the queue.~~
-
-~~6. If bot is stuck in a weird one-off question, then simply click on [x] to close the job application. Bot will proceed
-   to next job in the queue.~~
-   
-~~7.  Some employers add human checks like enter the sum of 2 + 7 (or x + y) and other really one-off questions. The bot
-    cannot be trained to answer those questions. It is suggested to add such employers to the `companyBlacklist:` in
-    `config.yaml` so the bot continues its job without hindrance.~~
 
 ## 🆘❓Need Further Assistance?
 

@@ -22,8 +22,8 @@ class LinkedinEasyApply:
         self.residency = parameters.get('residentStatus', [])
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
-        self.file_name = "output_"
-        self.unprepared_questions_file_name = "unprepared_questions"
+        self.file_name = "../output_"
+        self.unprepared_questions_file_name = "../unprepared_questions"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
         if 'coverLetter' in parameters['uploads']:
@@ -56,7 +56,7 @@ class LinkedinEasyApply:
         page_source = self.browser.page_source
 
         if '/checkpoint/challenge/' in current_url or 'security check' in page_source:
-            input("Please complete the security check and press enter in this console when it is done.")
+            input("Please complete the security check and press enter on this console when it is done.")
             time.sleep(random.uniform(5.5, 10.5))
 
     def start_applying(self):
@@ -64,7 +64,7 @@ class LinkedinEasyApply:
         random.shuffle(searches)
 
         page_sleep = 0
-        minimum_time = 60 * 15 # minimum time bot should run before taking a break
+        minimum_time = 60 * 15  # minimum time bot should run before taking a break
         minimum_page_time = time.time() + minimum_time
 
         for (position, location) in searches:
@@ -82,7 +82,7 @@ class LinkedinEasyApply:
                     time.sleep(random.uniform(1.5, 3.5))
                     print("Starting the application process for this page...")
                     self.apply_jobs(location)
-                    print("Applying to jobs on this page has been completed!")
+                    print("Job applications on this page have been successfully completed.")
 
                     time_left = minimum_page_time - time.time()
                     if time_left > 0:
@@ -90,7 +90,7 @@ class LinkedinEasyApply:
                         time.sleep(time_left)
                         minimum_page_time = time.time() + minimum_time
                     if page_sleep % 5 == 0:
-                        sleep_time = random.randint(180, 300) # Changed from 500, 900 {seconds}
+                        sleep_time = random.randint(180, 300)  # Changed from 500, 900 {seconds}
                         print("Sleeping for " + str(sleep_time / 60) + " minutes.")
                         time.sleep(sleep_time)
                         page_sleep += 1
@@ -118,10 +118,10 @@ class LinkedinEasyApply:
         except:
             pass
         if 'No matching jobs found' in no_jobs_text:
-            raise Exception("No more jobs on this page")
+            raise Exception("No more jobs on this page.")
 
         if 'unfortunately, things are' in self.browser.page_source.lower():
-            raise Exception("No more jobs on this page")
+            raise Exception("No more jobs on this page.")
 
         job_results_header = ""
         maybe_jobs_crap = ""
@@ -141,10 +141,10 @@ class LinkedinEasyApply:
             if len(job_list) == 0:
                 raise Exception("No job class elements found in page")
         except:
-            raise Exception("No more jobs on this page")
+            raise Exception("No more jobs on this page.")
 
         if len(job_list) == 0:
-            raise Exception("No more jobs on this page")
+            raise Exception("No more jobs on this page.")
 
         for job_tile in job_list:
             job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
@@ -193,16 +193,7 @@ class LinkedinEasyApply:
                     while retries < max_retries:
                         try:
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-
-                            # Default click action, comment to use alternative
                             job_el.click()
-
-                            # Alternative click method slightly speeds up but could be problematic
-                            # comment default click action and uncomment 'actions' lines
-                            # actions = ActionChains(self.browser)
-                            # actions.move_to_element(job_el).click().perform()
-
-                            # Exit the loop if successful
                             break
 
                         except StaleElementReferenceException:
@@ -214,14 +205,13 @@ class LinkedinEasyApply:
                     try:
                         done_applying = self.apply_to_job()
                         if done_applying:
-                            print("Done applying to the job!")
+                            print(f"Application sent to {company} for the position of {job_title}.")
                         else:
-                            print('Already applied to the job!')
+                            print(f"An application for a job at {company} has been submitted earlier.")
                     except:
                         temp = self.file_name
-                        self.file_name = "failed_"
-                        print("Failed to apply to job! Please submit a bug report with this link: " + link)
-                        print("Writing to the failed csv file...")
+                        self.file_name = "../failed_"
+                        print("Failed to apply to job. Please submit a bug report with this link: " + link)
                         try:
                             self.write_to_file(company, job_title, link, job_location, location)
                         except:
@@ -232,14 +222,15 @@ class LinkedinEasyApply:
                         self.write_to_file(company, job_title, link, job_location, location)
                     except Exception:
                         print(
-                            "Could not write the job to the file! No special characters in the job title/company is allowed!")
+                            "Unable to save the job information in the file. The job title or company cannot contain special characters,")
                         traceback.print_exc()
                 except:
                     traceback.print_exc()
-                    print("Could not apply to the job!")
+                    print(f"Could not apply to the job in {company}")
                     pass
             else:
-                print("Job contains blacklisted keyword or company or poster name!")
+                print(f"Job for {company} by {poster} contains a blacklisted word {word}.")
+
             self.seen_jobs += link
 
     def apply_to_job(self):
@@ -257,7 +248,7 @@ class LinkedinEasyApply:
         except:
             pass
 
-        print("Applying to the job....")
+        print("Starting the job application...")
         easy_apply_button.click()
 
         button_text = ""
@@ -271,21 +262,22 @@ class LinkedinEasyApply:
                     try:
                         self.unfollow()
                     except:
-                        print("Failed to unfollow company!")
+                        print("Failed to unfollow company.")
                 time.sleep(random.uniform(1.5, 2.5))
                 next_button.click()
                 time.sleep(random.uniform(3.0, 5.0))
 
                 # Newer error handling
                 error_messages = [
-                    'please enter a valid answer',
-                    'enter a decimal number',
+                    'enter a valid',
+                    'enter a decimal',
                     'file is required',
-                    'please make a selection',
+                    'make a selection',
                     'select checkbox to proceed',
-                    'saisissez un numéro whole',
+                    'saisissez un numéro',
                     '请输入whole编号',
                     'Numéro de téléphone',
+                    'use the format'
                 ]
 
                 if any(error in self.browser.page_source.lower() for error in error_messages):
@@ -370,14 +362,18 @@ class LinkedinEasyApply:
 
                     if 'driver\'s licence' in radio_text or 'driver\'s license' in radio_text:
                         answer = self.get_answer('driversLicence')
-                    elif 'gender' in radio_text or 'veteran' in radio_text or 'race' in radio_text or 'disability' in radio_text or 'latino' in radio_text:
-                        answer = ""
-                        for option in radio_options:
-                            if 'prefer' in option.lower() or 'decline' in option.lower() or 'don\'t' in option.lower() or 'specified' in option.lower() or 'none' in option.lower():
-                                answer = option
 
-                        if answer == "":
-                            answer = radio_options[len(radio_options) - 1]
+                    elif any(keyword in radio_text.lower() for keyword in
+                             [
+                                 'Aboriginal', 'native', 'indigenous', 'tribe', 'first nations',
+                                 'native american', 'native hawaiian', 'inuit', 'metis', 'maori',
+                                 'aborigine', 'ancestral', 'native peoples', 'original people',
+                                 'first people', 'gender', 'race', 'disability', 'latino', 'torres',
+                                 'do you identify'
+                             ]):
+                        negative_keywords = ['prefer', 'decline', 'don\'t', 'specified', 'none', 'no']
+                        answer = next((option for option in radio_options if
+                                       any(neg_keyword in option.lower() for neg_keyword in negative_keywords)), None)
 
                     elif 'assessment' in radio_text:
                         answer = self.get_answer("assessment")
@@ -393,6 +389,10 @@ class LinkedinEasyApply:
 
                     elif 'authorized' in radio_text or 'authorised' in radio_text or 'legally' in radio_text:
                         answer = self.get_answer('legallyAuthorized')
+
+                    elif any(keyword in radio_text.lower() for keyword in
+                             ['certified', 'certificate', 'cpa', 'chartered accountant', 'qualification']):
+                        answer = self.get_answer('certifiedProfessional')
 
                     elif 'urgent' in radio_text:
                         answer = self.get_answer('urgentFill')
@@ -499,7 +499,7 @@ class LinkedinEasyApply:
                         to_enter = self.personal_info['First Name'] + " " + self.personal_info['Last Name']
 
                     elif 'pronouns' in question_text:
-                       to_enter = self.personal_info['Pronouns']
+                        to_enter = self.personal_info['Pronouns']
 
                     elif 'phone' in question_text:
                         to_enter = self.personal_info['Mobile Phone Number']
@@ -589,11 +589,11 @@ class LinkedinEasyApply:
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-                        #if choice == "":
+                        # if choice == "":
                         #    choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
 
-                    elif 'commut' in question_text or 'on-site' in question_text or 'hybrid' in question_text or 'onsite' in question_text :
+                    elif 'commut' in question_text or 'on-site' in question_text or 'hybrid' in question_text or 'onsite' in question_text:
                         answer = self.get_answer('commute')
 
                         choice = ""
@@ -603,7 +603,7 @@ class LinkedinEasyApply:
                             else:
                                 if 'no' in option.lower():
                                     choice = option
-                        #if choice == "":
+                        # if choice == "":
                         #    choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
 
@@ -693,13 +693,19 @@ class LinkedinEasyApply:
 
                         self.select_dropdown(dropdown_field, choice)
 
-                    elif 'gender' in question_text or 'veteran' in question_text or 'race' in question_text or 'disability' in question_text or 'latino' in question_text:
+                    elif any(keyword in question_text.lower() for keyword in
+                             [
+                                 'aboriginal', 'native', 'indigenous', 'tribe', 'first nations',
+                                 'native american', 'native hawaiian', 'inuit', 'metis', 'maori',
+                                 'aborigine', 'ancestral', 'native peoples', 'original people',
+                                 'first people', 'gender', 'race', 'disability', 'latino'
+                             ]):
+                        negative_keywords = ['prefer', 'decline', 'don\'t', 'specified', 'none']
+
                         choice = ""
-                        for option in options:
-                            if 'prefer' in option.lower() or 'decline' in option.lower() or 'don\'t' in option.lower() or 'specified' in option.lower() or 'none' in option.lower():
-                                choice = option
-                        if choice == "":
-                            choice = options[len(options) - 1]
+                        choice = next((option for options in option.lower() if
+                                   any(neg_keyword in option.lower() for neg_keyword in negative_keywords)), None)
+
                         self.select_dropdown(dropdown_field, choice)
 
                     elif 'email' in question_text:
@@ -804,14 +810,14 @@ class LinkedinEasyApply:
                         self.select_dropdown(country_code_picker, self.personal_info['Phone Country Code'])
                     except Exception as e:
                         print("Country code " + self.personal_info[
-                            'Phone Country Code'] + " not found! Make sure it is exact.")
+                            'Phone Country Code'] + " not found. Please make sure it is same as in LinkedIn.")
                         print(e)
                     try:
                         phone_number_field = el.find_element(By.XPATH,
                                                              '//input[contains(@id,"phoneNumber")][contains(@id,"nationalNumber")]')
                         self.enter_text(phone_number_field, self.personal_info['Mobile Phone Number'])
                     except Exception as e:
-                        print("Could not input phone number:")
+                        print("Could not enter phone number:")
                         print(e)
 
     def fill_up(self):
@@ -863,7 +869,7 @@ class LinkedinEasyApply:
                 writer.writerow(to_write)
         except:
             print(
-                "Could not write the unprepared question to the file! No special characters in the question is allowed: ")
+                "Special characters in questions are not allowed. Failed to update unprepared questions log.")
             print(question_text)
 
     def scroll_slow(self, scrollable_element, start=0, end=3600, step=100, reverse=False):

@@ -16,8 +16,8 @@ lessthanTenApplicants: False
 experienceLevel:
  internship: False
  entry: True
- associate: False
- mid-senior level: False
+ associate: True
+ mid-senior level: True
  director: False
  executive: False
 
@@ -96,11 +96,13 @@ checkboxes:
  # This is relative to the location and your citizenship applying above, and same with legallyAuthorized.
  requireVisa: False
  # Are you legally authorized to work in COUNTRY? (yes/no checkbox)
- legallyAuthorized: True
+ legallyAuthorized: False
+ # Do you have necessary licenses or certifications required in your profession? E.g. CPA, CA, CFA, professional license
+ certifiedProfessional: True
  # We must fill this position urgently. Can you start immediately? (yes/no checkbox)
  urgentFill: True
- # Are you comfortable commuting to this job's location? (yes/no checkbox)
- commute: False
+ # Are you comfortable commuting or work on-site to this job's location? (yes/no checkbox)
+ commute: True
  # Are you comfortable working in a remote environment? (yes/no checkbox)
  remote: True
  # Are you comfortable taking a drug in accordance with local/state laws? (yes/no checkbox)
@@ -208,7 +210,7 @@ personalInfo:
  Pronouns: Mr.
  First Name: FirstName
  Last Name: LastName
- Phone Country Code: Canada (+1) # See linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
+ Phone Country Code: Canada (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
  Mobile Phone Number: 1234567890
  Street address: 123 Fake Street
  City: Red Deer, Alberta # Include the state/province as well!

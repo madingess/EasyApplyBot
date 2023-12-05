@@ -29,7 +29,7 @@ def init_browser():
 
 
 def validate_yaml():
-    with open("config.yaml", 'r') as stream:
+    with open("../config.yaml", 'r') as stream:
         try:
             parameters = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
@@ -103,6 +103,7 @@ def validate_yaml():
     assert isinstance(checkboxes['driversLicence'], bool)
     assert isinstance(checkboxes['requireVisa'], bool)
     assert isinstance(checkboxes['legallyAuthorized'], bool)
+    assert isinstance(checkboxes['certifiedProfessional'], bool)
     assert isinstance(checkboxes['urgentFill'], bool)
     assert isinstance(checkboxes['commute'], bool)
     assert isinstance(checkboxes['backgroundCheck'], bool)
