@@ -1,0 +1,230 @@
+# Add your LinkedIn email ID and password. WARNING: KEEP THIS OFFLINE ON YOUR PC AND DO NOT COMMIT/UPLOAD.
+email: email@domain.com
+password: yourpassword
+
+# Anti-lock default is False to prevent your PC from sleeping to allow bot to run uninterrupted.
+# Set it to True if you wish to disable this functionality.
+disableAntiLock: False
+
+# Set to True if you wish to search for remote jobs only.
+remote: False
+
+# Set to True if you wish to search for jobs marked as "under 10 applicants" (default is False).
+lessthanTenApplicants: False
+
+# Set to True or False to suit your preference. Multiple True allowed.
+experienceLevel:
+ internship: False
+ entry: True
+ associate: True
+ mid-senior level: True
+ director: False
+ executive: False
+
+# Set to True or False to suit your preference. Multiple True allowed.
+jobTypes:
+ full-time: True
+ contract: True
+ part-time: False
+ temporary: True
+ internship: False
+ other: False
+ volunteer: False
+
+# Set ONLY one as True to suit your preference.
+date:
+ all time: True
+ month: False
+ week: False
+ 24 hours: False
+
+# Remove hash sign to add positions. You can add as many as you need, but preserve formatting
+positions:
+ #- First position
+ #- A second position
+ #- A third position
+ #- ...
+
+# Remove hash sign to add locations. You can add as many as you need including adding 'Remote' as a location but first location must be a valid country.
+locations:
+ #- First location
+ #- A second location
+ #- A third location
+ #- ...
+ #- Remote
+
+# Set to True if you are residing in the country of job
+residentStatus: False
+
+# Distance from the location added above. Allowed values are {0, 5, 10, 25, 50, 100}, use only one.
+distance: 100
+
+# Optional directory to save logs, does not work sometimes. Does not work sometimes, so leave it unchanged.
+outputFileDirectory: ~/Documents/Applications/EasyApplyBot/EasyApplyBot/
+
+# Companies you don't want to apply.
+companyBlacklist:
+ #- company
+ #- company2
+
+# Job titles you want to avoid applying. Use it to refine performance of bot.
+titleBlacklist:
+ #- word1
+ #- word2
+
+# Bot will not apply to jobs posted by black listed people.
+posterBlacklist:
+ #- name1
+ #- name2
+
+# Path to your CV/resume and cover letter (remove hash sign). These paths often don't work
+# so apply one job manually once, bot will reuse manually uploaded CV for automating the task.
+# Note: Prefer a path without spaces, i.e. instead of "Me My" to "MeMy" or "Me_My".
+uploads:
+ resume: C:\Users\myDirectory\Resume.pdf
+ # Cover letter is optional
+ #coverLetter: C:\Users\myDirectory\CoverLettter.pdf
+
+
+# ------------ QA section -------------------
+
+# ------------ Additional parameters: checkboxes ---------------
+checkboxes:
+ # Do you have a valid driver's license? (yes/no checkbox)
+ driversLicence: True
+ # Will you now, or in the future, require sponsorship for employment visa status (e.g. H-1B visa status)? (yes/no checkbox)
+ # This is relative to the location and your citizenship applying above, and same with legallyAuthorized.
+ requireVisa: False
+ # Are you legally authorized to work in COUNTRY? (yes/no checkbox)
+ legallyAuthorized: False
+ # Do you have necessary licenses or certifications required in your profession? E.g. CPA, CA, CFA, professional license
+ certifiedProfessional: True
+ # We must fill this position urgently. Can you start immediately? (yes/no checkbox)
+ urgentFill: True
+ # Are you comfortable commuting or work on-site to this job's location? (yes/no checkbox)
+ commute: True
+ # Are you comfortable working in a remote environment? (yes/no checkbox)
+ remote: True
+ # Are you comfortable taking a drug in accordance with local/state laws? (yes/no checkbox)
+ drugTest: True
+ # Are you willing to complete an assessment? (yes/no checkbox)
+ assessment: True
+ # Do you have security clearance of [xxx] country? (yes/no checkbox)
+ securityClearance: False
+ # Have you completed the following level of education: DEGREE TYPE? Remove applicable # signs (yes/no checkbox)
+ degreeCompleted:
+  # - High School Diploma
+  # - Bachelor's Degree
+  # - Associate's Degree
+  # - Master's Degree
+  # - Master of Business Administration
+  # - Doctor of Philosophy
+  # - Doctor of Medicine
+  # - Doctor of Law
+ # Are you willing to undergo a background check, in accordance with local law/regulations?
+ backgroundCheck: True
+
+# ------------ Additional parameters: universityGpa ---------------
+universityGpa: 3.0
+
+# ------------ Additional parameters: salaryMinimum ---------------
+salaryMinimum: 35000
+
+# ------------ Additional parameters: languages ---------------
+languages:
+ english: Native or bilingual # Allowed choices { None, Conversational, Professional, Native or bilingual }
+ # arabic:
+ # french:
+
+# ------------ Additional parameters: noticePeriod in weeks ---------------
+noticePeriod: 8
+
+# ------------ Additional parameters: years of experience ---------------
+# How many years of work experience do you have ...? (whole numbers only)
+# You may add more skills depending on your industry or profession at the bottom.
+experience:
+ # normal ones
+ Accounting/Auditing: 0
+ Administrative : 0
+ Advertising : 0
+ Analyst : 0
+ Art/Creative: 0
+ Business Development: 0
+ Consulting: 0
+ Customer Service: 0
+ Distribution Design: 0
+ Education: 0
+ Engineering: 0
+ Finance: 0
+ General Business: 0
+ Health Care Provider: 0
+ Human Resources: 0
+ Information Technology: 0
+ Legal: 0
+ Management: 0
+ Manufacturing: 0
+ Marketing: 0
+ Public Relations: 0
+ Purchasing: 0
+ Product Management: 0
+ Project Management: 0
+ Production: 0
+ Quality Assurance: 0
+ Research: 0
+ Sales: 0
+ Science: 0
+ Strategy/Planning: 0
+ Supply Chain: 0
+ Training: 0
+ Writing/Editing: 0
+ VBA: 0
+ PowerBI: 0
+ PowerQuery: 0
+ Excel: 0
+ PowerPoint: 0
+ Word: 0
+ SQL Server: 0
+ Communication: 0
+ Financial markets: 0
+ Business: 0
+ Financial services: 0
+ Team leadership: 0
+ Cash flow: 0
+ Hedging: 0
+ Treasury services: 0
+ Microsoft Power BI: 0
+ Accounting: 0
+ Auditing: 0
+ Financial modeling: 0
+ Budgeting & forecasting: 0
+ FP&A: 0
+ PQE: 0
+ Training & Development: 0
+ #python: 0
+ #selenium: 0
+ # default to put for any industry/skill that you did not list
+ default: 0
+
+# ------------ Additional parameters: personal info ---------------
+personalInfo:
+ Pronouns: Mr.
+ First Name: FirstName
+ Last Name: LastName
+ Phone Country Code: Canada (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
+ Mobile Phone Number: 1234567890
+ Street address: 123 Fake Street
+ City: Red Deer, Alberta # Include the state/province as well!
+ State: YourState
+ Zip: YourZip/Postal
+ Linkedin: https://www.linkedin.com/in/my-linkedin-profile
+ Website: https://www.my-website.com # github/website is interchangeable here
+ MessageToManager: "Hi, I am interested to join your organization. Please have a look at my resume. Thank you." # Keep message short and within the quotes. This is a testing feature and may not work.
+
+# ------------ Additional parameters: USA employment crap ---------------
+eeo:
+ gender: None
+ race: None
+ veteran: None
+ disability: None
+ citizenship: yes
+ clearance: no
