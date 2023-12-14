@@ -1,68 +1,40 @@
 # LinkedIn Easy Apply Bot
 
-Automate your LinkedIn job applications using Easy Apply feature with ease using this Python and Selenium-based bot.
-Tested successfully on over 20,000+ job applications!
+_Automate your LinkedIn job applications with ease!_
 
-## Disclaimer
+This Python and Selenium-based bot automates applying to jobs using the Easy Apply feature on LinkedIn.
 
-**Use this bot at your own risk.** This bot comes with no warranties or guarantees. I am not liable for any
-consequences, including potential account restrictions or suspensions by LinkedIn. Consider it an educational and
-exploratory project!
+## Key Features
 
-## Credits & Enhancements
+- Apply to thousands of jobs effortlessly.
+- Track application dates and times for performance analysis. <span style="color:green">(New!)</span>
+- Windows executable available for easy setup. <span style="color:green">(New!)</span>
 
-This repository is a fork from the original developer [Nathan Duma](https://github.com/NathanDuma), with significant
-code updates contributed by [Micheal Dingess](https://github.com/madingess/). Since their last commits, I've diligently
-maintained and improved this fork, addressing bugs, introducing new features, and enhancing the user experience.
-Notably, I've added the option to log application submission dates and times for performance tracking.
+## Important
 
-## 🎥 How-to Video
+- Use at your own risk. LinkedIn may restrict or suspend accounts for bot usage.
+- Consider this an educational project.
 
-Setting-up the bot:
+## Getting Started
 
-* For your convenience, I've created a comprehensive video tutorial to guide you through the setup and usage of the bot.
-Check it out on [YouTube](https://youtu.be/IXflenwJzhQ).
+- **Download the Windows executable:** No Python setup required! Just configure `config.yaml` and run the
+  bot. See [Releases page](https://github.com/voidbydefault/EasyApplyBot/releases/tag/v0).
+- **Run via source code:** For advanced users. Requires Python setup. Watch the video tutorial
+  on [YouTube](https://youtu.be/IXflenwJzhQ).
 
-Setting-up the optional monitoring dashboard (Sep-23 update):
+## Additional Resources
 
-* If you wish to set up the optional bot monitoring dashboard using PowerBI then watch [this YouTube video.](https://youtu.be/4LH8WTrMCxw)
-
-## 🛠️ Setup & Launch
-
-If you are new to Python, please watch this [video first](https://youtu.be/IXflenwJzhQ).
-
-1. Start by configuring the `config.yaml` file. This is a one-time setup and contains the necessary inputs for running
-   the bot. Necessary help is documented within the `config.yaml`. Please maintain the formatting and avoid adding
-   unnecessary spaces in the file.
-2. After configuring the file, install the dependencies listed in `requirements.txt`.
-
-3. Now, you're ready to launch the bot using your preferred method:
-
-    - If you're using an IDE like PyCharm Community Edition, execute `main.py` from your IDE (recommended)
-    - If you prefer the command line or terminal, activate the virtual environment with `source venv/bin/activate`, then
-      run `python3 main.py`.
-
-In case you encounter any "dependencies not found" errors, ensure that the required dependencies are installed. You can
-verify this using your IDE or, if you're using the command line/terminal, run `pip install -r requirements.txt` before
-executing `python3 main.py` to initiate the bot.
-
-### 🐞🔧 Known Issues & Resolutions
-
-1. In some cases, integrated development environments (IDEs) such as PyCharm might conflict with the included virtual
-   environment (venv) in this project. To address this, you can delete the `venv` folder and configure the Python
-   interpreter to use the "local" option. Furthermore, installing the dependencies from `requirements.txt` ensures a
-   successful run of `main.py`.
-
-## 🆘❓Need Further Assistance?
-
-If you're new to Python, I recommend watching the [YouTube](https://youtu.be/IXflenwJzhQ) video for a comprehensive
-overview. If you encounter any genuine issues with the code or the bot's functionality, please raise them in the "
-Issues" section of this repository. However, please refrain from using issues for personal technical support.
-
-For general inquiries and support, feel free to post a comment describing your problem under
-the [YouTube](https://youtu.be/IXflenwJzhQ) video.
+- Optional BI dashboard setup: Watch this [YouTube](https://youtu.be/4LH8WTrMCxw) video.
+- **Troubleshooting:** Encounter errors? Ensure dependencies are installed.
+- **Need assistance?** Comment under my Youtube videos for general inquiries.
+- **Genuine issues** Raise issues page at my GitHub.
 
 ## Support This Project
 
-If you find this project valuable, consider showing your support by buying me a coffee through
-[PayPal](https://paypal.me/voidbydefault). Your support is greatly appreciated!
+Buy me a coffee through [PayPal](https://paypal.me/voidbydefault) if you find this tool helpful!
+
+## Credits
+
+- Original developer: [Nathan Duma](https://github.com/NathanDuma)
+- Significant code updates: [Micheal Dingess](https://github.com/madingess/)
+- Maintenance and improvements: [voidbydefault](https://github.com/voidbydefault)
