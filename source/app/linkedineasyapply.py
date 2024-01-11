@@ -1,7 +1,6 @@
 import time, random, csv, pyautogui, pdb, traceback, sys
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -559,7 +558,7 @@ class LinkedinEasyApply:
                     options = [options.text for options in select.options]
 
                     if 'proficiency' in question_text:
-                        proficiency = "Conversational"
+                        proficiency = "None"
                         for language in self.languages:
                             if language.lower() in question_text:
                                 proficiency = self.languages[language]
@@ -915,7 +914,8 @@ class LinkedinEasyApply:
         distance_url = "?distance=" + str(parameters['distance'])
 
         job_types_url = "f_JT="
-        job_types = parameters.get('experienceLevel', [])
+        job_types = parameters.get('jobTypes', [])
+        # job_types = parameters.get('experienceLevel', [])
         for key in job_types:
             if job_types[key]:
                 job_types_url += "%2C" + key[0].upper()

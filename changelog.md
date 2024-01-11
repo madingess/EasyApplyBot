@@ -1,4 +1,7 @@
 # Change log #
+### January 2024 update: ###
+1. Bug fix to allow proper use of `Job Type` filter (e.g. full-time, contract, etc.)
+
 ### December 2023 updates: ###
 **Major change**
 
