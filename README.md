@@ -7,8 +7,7 @@ This Python and Selenium-based bot automates applying to jobs using the Easy App
 ## Key Features
 
 - Apply to thousands of jobs effortlessly.
-- Track application dates and times for performance analysis. <span style="color:green">(New!)</span>
-- Windows executable available for easy setup. <span style="color:green">(New!)</span>
+- Track application dates and times for performance analysis.
 
 ## Important
 
@@ -17,24 +16,38 @@ This Python and Selenium-based bot automates applying to jobs using the Easy App
 
 ## Getting Started
 
-- **Download the Windows executable:** No Python setup required! Just configure `config.yaml` and run the
-  bot. See [Releases page](https://github.com/voidbydefault/EasyApplyBot/releases/tag/v0).
-- **Run via source code:** For advanced users. Requires Python setup. Watch the video tutorial
-  on [YouTube](https://youtu.be/IXflenwJzhQ).
+1. Modify the `config.py` file locally to include your LinkedIn credentials, personal information, and job preferences.
+
+2. Install python3 and pip3 on your system. Then, install the required dependencies using the following commands: (Unix commands)
+```bash
+sudo apt-get install python3
+python3 -m pip install webdriver-manager --upgrade
+python3 -m pip install packaging
+```
+
+3. Run the bot with python
+```bash
+python3 main.py
+```
+
+Optionally, watch this video tutorial by [voidbydefault](https://github.com/voidbydefault) during his time maintaining the project, on [YouTube](https://youtu.be/IXflenwJzhQ).
 
 ## Additional Resources
 
 - Optional BI dashboard setup: Watch this [YouTube](https://youtu.be/4LH8WTrMCxw) video.
 - **Troubleshooting:** Encounter errors? Ensure dependencies are installed.
-- **Need assistance?** Comment under my Youtube videos for general inquiries.
-- **Genuine issues** Raise issues page at my GitHub.
+- **Issues** Raise issues page at my GitHub.
 
 ## Support This Project
 
-Buy me a coffee through [PayPal](https://paypal.me/voidbydefault) if you find this tool helpful!
+By supporting this project, you help maintain and improve the bot. Your support is greatly appreciated!
+
+See the sponsor button on the top right of the page or [click here](https://github.com/sponsors/madingess).
+
+Also, buy a coffee for [voidbydefault](https://github.com/voidbydefault) through [PayPal](https://paypal.me/voidbydefault) for his efforts maintaining and improving this bot!
 
 ## Credits
 
+- Maintenance and significant updates: [Micheal Dingess](https://github.com/madingess/)
+- Improvements and maintenance contributions: [voidbydefault](https://github.com/voidbydefault)
 - Original developer: [Nathan Duma](https://github.com/NathanDuma)
-- Significant code updates: [Micheal Dingess](https://github.com/madingess/)
-- Maintenance and improvements: [voidbydefault](https://github.com/voidbydefault)
