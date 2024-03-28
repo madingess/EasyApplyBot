@@ -113,8 +113,8 @@ checkboxes:
  securityClearance: False
  # Have you completed the following level of education: DEGREE TYPE? Remove applicable # signs (yes/no checkbox)
  degreeCompleted:
-  # - High School Diploma
-  # - Bachelor's Degree
+   - High School Diploma
+   - Bachelor's Degree
   # - Associate's Degree
   # - Master's Degree
   # - Master of Business Administration
@@ -125,19 +125,19 @@ checkboxes:
  backgroundCheck: True
 
 # ------------ Additional parameters: universityGpa ---------------
-universityGpa: 3.0
+universityGpa: 4.0
 
 # ------------ Additional parameters: salaryMinimum ---------------
-salaryMinimum: 35000
+salaryMinimum: 65000
 
 # ------------ Additional parameters: languages ---------------
 languages:
  english: Native or bilingual # Allowed choices { None, Conversational, Professional, Native or bilingual }
- # arabic:
- # french:
+ # arabic: Conversational
+ # french: Professional
 
 # ------------ Additional parameters: noticePeriod in weeks ---------------
-noticePeriod: 8
+noticePeriod: 2
 
 # ------------ Additional parameters: years of experience ---------------
 # How many years of work experience do you have ...? (whole numbers only)
