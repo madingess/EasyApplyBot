@@ -49,5 +49,5 @@ Also, buy a coffee for [voidbydefault](https://github.com/voidbydefault) through
 ## Credits
 
 - Maintenance and significant updates: [Micheal Dingess](https://github.com/madingess/)
-- Improvements and maintenance contributions: [voidbydefault](https://github.com/voidbydefault)
-- Original developer: [Nathan Duma](https://github.com/NathanDuma)
+- Improvements and maintenance contributions: [voidbydefault](https://github.com/voidbydefault) with fork [voidbydefault/EasyApplyBot](https://github.com/voidbydefault/EasyApplyBot)
+- Original developer: [Nathan Duma](https://github.com/NathanDuma) with [NathanDuma/LinkedIn-Easy-Apply-Bot](https://github.com/NathanDuma/LinkedIn-Easy-Apply-Bot)
