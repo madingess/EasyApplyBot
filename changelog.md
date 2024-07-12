@@ -1,4 +1,11 @@
 # Change log #
+
+### July 2024 update: ###
+1. Fixed backend change by LinkedIn in job titles
+2. Added more non-English error prompts
+3. Added feature to log job location and search location in CSV logs
+4. Enforced UTF-8 encoding for CSV logs to avoid encoding errors
+
 ### January 2024 update: ###
 1. Bug fix to allow proper use of `Job Type` filter (e.g. full-time, contract, etc.)
 

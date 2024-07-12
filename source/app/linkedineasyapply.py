@@ -149,7 +149,11 @@ class LinkedinEasyApply:
             job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
 
             try:
-                job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text
+                # patch to incorporate new 'verification' crap by LinkedIn
+                # job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text # original code
+                job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                job_title = job_title_element.find_element(By.TAG_NAME, 'strong').text
+
                 link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').get_attribute('href').split('?')[0]
             except:
                 pass
@@ -221,7 +225,7 @@ class LinkedinEasyApply:
                         self.write_to_file(company, job_title, link, job_location, location)
                     except Exception:
                         print(
-                            "Unable to save the job information in the file. The job title or company cannot contain special characters,")
+                            f"Unable to save the job information in the file. The job title {job_title} or company {company} cannot contain special characters,")
                         traceback.print_exc()
                 except:
                     traceback.print_exc()
@@ -275,7 +279,11 @@ class LinkedinEasyApply:
                     'select checkbox to proceed',
                     'saisissez un numéro',
                     '请输入whole编号',
+                    '请输入decimal编号',
+                    '长度超过 0.0',
                     'Numéro de téléphone',
+                    'Introduce un número de whole entre',
+                    'Insira um um número',
                     'use the format'
                 ]
 
@@ -850,11 +858,11 @@ class LinkedinEasyApply:
             pass
 
     def write_to_file(self, company, job_title, link, location, search_location):
-        to_write = [company, job_title, link, location, datetime.now()]
+        to_write = [company, job_title, link, location, search_location, datetime.now()]
         # file_path = self.output_file_directory + self.file_name + search_location + ".csv"
         file_path = self.file_name + search_location + ".csv"
 
-        with open(file_path, 'a') as f:
+        with open(file_path, 'a', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(to_write)
 
