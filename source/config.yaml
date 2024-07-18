@@ -1,6 +1,6 @@
 # Add your LinkedIn email ID and password. WARNING: KEEP THIS OFFLINE ON YOUR PC AND DO NOT COMMIT/UPLOAD.
-email: email@domain.com
-password: yourpassword
+email: tharun.esta@gmail.com
+password: Tll212507@
 
 # Anti-lock default is False to prevent your PC from sleeping to allow bot to run uninterrupted.
 # Set it to True if you wish to disable this functionality.
@@ -13,7 +13,7 @@ remote: False
 lessthanTenApplicants: False
 
 # Set to True or False to suit your preference. Multiple True allowed.
-experienceLevel:
+experienceLevel: Fresher
  internship: False
  entry: True
  associate: True
@@ -22,7 +22,7 @@ experienceLevel:
  executive: False
 
 # Set to True or False to suit your preference. Multiple True allowed.
-jobTypes:
+jobTypes: Software developer/ Frontend developer
  full-time: True
  contract: True
  part-time: False
@@ -39,14 +39,17 @@ date:
  24 hours: False
 
 # Remove hash sign to add positions. You can add as many as you need, but preserve formatting
-positions:
+positions: Developer
  #- First position
  #- A second position
  #- A third position
  #- ...
 
 # Remove hash sign to add locations. You can add as many as you need including adding 'Remote' as a location but first location must be a valid country.
-locations:
+locations: Hyderabad
+            Chennai
+            Banglore
+            pune
  #- First location
  #- A second location
  #- A third location
@@ -132,9 +135,9 @@ salaryMinimum: 35000
 
 # ------------ Additional parameters: languages ---------------
 languages:
- english: Native or bilingual # Allowed choices { None, Conversational, Professional, Native or bilingual }
- # arabic:
- # french:
+ english: Conversational # Allowed choices { None, Conversational, Professional, Native or bilingual }
+ telugu:  Native
+ hindi:  Conversational
 
 # ------------ Additional parameters: noticePeriod in weeks ---------------
 noticePeriod: 8
@@ -207,24 +210,24 @@ experience:
 
 # ------------ Additional parameters: personal info ---------------
 personalInfo:
- Pronouns: Mr.
- First Name: FirstName
- Last Name: LastName
- Phone Country Code: Canada (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
- Mobile Phone Number: 1234567890
- Street address: 123 Fake Street
- City: Red Deer, Alberta # Include the state/province as well!
- State: YourState
- Zip: YourZip/Postal
- Linkedin: https://www.linkedin.com/in/my-linkedin-profile
+ Pronouns: Mr. Tharun
+ First Name: Tharun
+ Last Name: Esta
+ Phone Country Code: India(+91) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
+ Mobile Phone Number: 9014719422
+ Street address: mallampet 
+ City: Hyderabad # Include the state/province as well!
+ State: Telangana
+ Zip: 502303
+ Linkedin: https://www.linkedin.com/in/tharun-esta
  Website: https://www.my-website.com # github/website is interchangeable here
  MessageToManager: "Hi, I am interested to join your organization. Please have a look at my resume. Thank you." # Keep message short and within the quotes. This is a testing feature and may not work.
 
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:
- gender: None
+ gender: Male
  race: None
  veteran: None
- disability: None
+ disability: no
  citizenship: yes
  clearance: no
