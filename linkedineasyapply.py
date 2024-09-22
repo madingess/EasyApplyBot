@@ -1,4 +1,6 @@
-import time, random, csv, pyautogui, pdb, traceback, sys
+import time, random, csv, pyautogui, pdb, traceback, sys, os
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
@@ -21,8 +23,8 @@ class LinkedinEasyApply:
         self.residency = parameters.get('residentStatus', [])
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
-        self.file_name = "../output_"
-        self.unprepared_questions_file_name = "../unprepared_questions"
+        self.file_name = "output"
+        self.unprepared_questions_file_name = "unprepared_questions"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
         if 'coverLetter' in parameters['uploads']:
@@ -41,14 +43,41 @@ class LinkedinEasyApply:
 
     def login(self):
         try:
-            self.browser.get("https://www.linkedin.com/login")
-            time.sleep(random.uniform(5, 10))
-            self.browser.find_element(By.ID, "username").send_keys(self.email)
-            self.browser.find_element(By.ID, "password").send_keys(self.password)
-            self.browser.find_element(By.CSS_SELECTOR, ".btn__primary--large").click()
-            time.sleep(random.uniform(5, 10))
+            # Check if the "chrome_bot" directory exists
+            print("Attempting to restore previous session...")
+            if os.path.exists("chrome_bot"):
+                self.browser.get("https://www.linkedin.com/feed/")
+                time.sleep(random.uniform(5, 10))
+
+                # Check if the current URL is the feed page
+                if self.browser.current_url != "https://www.linkedin.com/feed/":
+                    print("Feed page not loaded, proceeding to login.")
+                    self.load_login_page_and_login()
+            else:
+                print("No session found, proceeding to login.")
+                self.load_login_page_and_login()
+
         except TimeoutException:
             raise Exception("Could not login!")
+
+    def load_login_page_and_login(self):
+        self.browser.get("https://www.linkedin.com/login")
+
+        # Wait for the username field to be present
+        WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located((By.ID, "username"))
+        )
+
+        self.browser.find_element(By.ID, "username").send_keys(self.email)
+        self.browser.find_element(By.ID, "password").send_keys(self.password)
+        self.browser.find_element(By.CSS_SELECTOR, ".btn__primary--large").click()
+
+        # Wait for the feed page to load after login
+        WebDriverWait(self.browser, 10).until(
+            EC.url_contains("https://www.linkedin.com/feed/")
+        )
+
+        time.sleep(random.uniform(5, 10))
 
     def security_check(self):
         current_url = self.browser.current_url
@@ -149,7 +178,7 @@ class LinkedinEasyApply:
             job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
 
             try:
-                # patch to incorporate new 'verification' crap by LinkedIn
+                ## patch to incorporate new 'verification' crap by LinkedIn
                 # job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text # original code
                 job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
                 job_title = job_title_element.find_element(By.TAG_NAME, 'strong').text
@@ -213,13 +242,14 @@ class LinkedinEasyApply:
                             print(f"An application for a job at {company} has been submitted earlier.")
                     except:
                         temp = self.file_name
-                        self.file_name = "../failed_"
+                        self.file_name = "failed"
                         print("Failed to apply to job. Please submit a bug report with this link: " + link)
                         try:
                             self.write_to_file(company, job_title, link, job_location, location)
                         except:
                             pass
                         self.file_name = temp
+                        print(f'updated {temp}.')
 
                     try:
                         self.write_to_file(company, job_title, link, job_location, location)
@@ -274,6 +304,7 @@ class LinkedinEasyApply:
                 error_messages = [
                     'enter a valid',
                     'enter a decimal',
+                    'Enter a whole number'
                     'file is required',
                     'make a selection',
                     'select checkbox to proceed',
@@ -283,7 +314,9 @@ class LinkedinEasyApply:
                     '长度超过 0.0',
                     'Numéro de téléphone',
                     'Introduce un número de whole entre',
+                    'Preguntas adicionales',
                     'Insira um um número',
+                    'Cuántos años'
                     'use the format'
                 ]
 
@@ -352,7 +385,7 @@ class LinkedinEasyApply:
             return 'no'
 
     def additional_questions(self):
-        # pdb.set_trace()
+        # pdb.set_trace() ## debugging crap
         frm_el = self.browser.find_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
         if len(frm_el) > 0:
             for el in frm_el:
@@ -860,7 +893,11 @@ class LinkedinEasyApply:
     def write_to_file(self, company, job_title, link, location, search_location):
         to_write = [company, job_title, link, location, search_location, datetime.now()]
         # file_path = self.output_file_directory + self.file_name + search_location + ".csv"
-        file_path = self.file_name + search_location + ".csv"
+        file_path = self.file_name + ".csv"
+        print(f'updated {file_path}.')
+
+        ## removed output logs with location name to have one file
+        # file_path = self.file_name + search_location + ".csv"
 
         with open(file_path, 'a', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -874,6 +911,7 @@ class LinkedinEasyApply:
             with open(file_path, 'a') as f:
                 writer = csv.writer(f)
                 writer.writerow(to_write)
+                print(f'Updated {file_path} with {to_write}.')
         except:
             print(
                 "Special characters in questions are not allowed. Failed to update unprepared questions log.")

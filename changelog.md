@@ -1,5 +1,12 @@
 # Change log #
 
+### September 2024 update: ###
+1. Introduced functionality to use previous Chrome session to avoid new login everytime.
+2. Updated PowerBI dashboard (named to `BOT_monitor.pbix`).
+3. Dropped the dea of `exe` version of the bot after unnecessary issues with Windows antivirus.
+4. Changed directory structure due to # 3 and help new users should get a prompt to install `requirements.txt` automatically.
+5. Improved log generation.
+
 ### July 2024 update: ###
 1. Fixed backend change by LinkedIn in job titles
 2. Added more non-English error prompts
