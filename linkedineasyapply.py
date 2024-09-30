@@ -58,7 +58,8 @@ class LinkedinEasyApply:
                 self.load_login_page_and_login()
 
         except TimeoutException:
-            raise Exception("Could not login!")
+            print("Timeout occurred, checking for security challenges...")
+            self.security_check()
 
     def load_login_page_and_login(self):
         self.browser.get("https://www.linkedin.com/login")
