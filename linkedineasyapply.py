@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -60,6 +61,15 @@ class LinkedinEasyApply:
         except TimeoutException:
             print("Timeout occurred, checking for security challenges...")
             self.security_check()
+            # raise Exception("Could not login!")
+
+    def security_check(self):
+        current_url = self.browser.current_url
+        page_source = self.browser.page_source
+
+        if '/checkpoint/challenge/' in current_url or 'security check' in page_source or 'quick verification' in page_source:
+            input("Please complete the security check and press enter on this console when it is done.")
+            time.sleep(random.uniform(5.5, 10.5))
 
     def load_login_page_and_login(self):
         self.browser.get("https://www.linkedin.com/login")
@@ -79,14 +89,6 @@ class LinkedinEasyApply:
         )
 
         time.sleep(random.uniform(5, 10))
-
-    def security_check(self):
-        current_url = self.browser.current_url
-        page_source = self.browser.page_source
-
-        if '/checkpoint/challenge/' in current_url or 'security check' in page_source:
-            input("Please complete the security check and press enter on this console when it is done.")
-            time.sleep(random.uniform(5.5, 10.5))
 
     def start_applying(self):
         searches = list(product(self.positions, self.locations))
@@ -161,9 +163,28 @@ class LinkedinEasyApply:
             raise Exception("Nothing to do here, moving forward...")
 
         try:
-            job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            self.scroll_slow(job_results)
-            self.scroll_slow(job_results, step=300, reverse=True)
+            # Linked is using a random string to refer to "jobs-search-results-list"
+            # temporarily resorting to full XPATH as a workaround
+            try:
+                job_results = self.browser.find_element(By.XPATH,
+                                                        "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div")
+            except NoSuchElementException:
+                try:
+                    job_results = self.browser.find_element(By.XPATH,
+                                                            "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div")
+                except NoSuchElementException:
+                    print("No job results found using the specified XPaths.")
+                    job_results = None
+
+            # If job_results was found, perform scrolling
+            if job_results:
+                self.scroll_slow(job_results)
+                self.scroll_slow(job_results, step=300, reverse=True)
+
+            # original code
+            # job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
+            # self.scroll_slow(job_results)
+            # self.scroll_slow(job_results, step=300, reverse=True)
 
             job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
                 By.CLASS_NAME, 'jobs-search-results__list-item')
@@ -306,7 +327,9 @@ class LinkedinEasyApply:
                     'enter a valid',
                     'enter a decimal',
                     'Enter a whole number'
+                    'Enter a whole number between 0 and 99',
                     'file is required',
+                    'whole number',
                     'make a selection',
                     'select checkbox to proceed',
                     'saisissez un numéro',
@@ -315,10 +338,19 @@ class LinkedinEasyApply:
                     '长度超过 0.0',
                     'Numéro de téléphone',
                     'Introduce un número de whole entre',
+                    'Inserisci un numero whole compreso',
                     'Preguntas adicionales',
                     'Insira um um número',
                     'Cuántos años'
-                    'use the format'
+                    'use the format',
+                    'A file is required',
+                    '请选择',
+                    '请 选 择',
+                    'Inserisci',
+                    'wholenummer',
+                    'Wpisz liczb',
+                    'zakresu od',
+                    'tussen'
                 ]
 
                 if any(error in self.browser.page_source.lower() for error in error_messages):
@@ -680,6 +712,15 @@ class LinkedinEasyApply:
                                     choice = option
                         if choice == "":
                             choice = options[len(options) - 1]
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif 'above 18' in question_text.lower():  # Check for "above 18" in the question text
+                        choice = ""
+                        for option in options:
+                            if 'yes' in option.lower():  # Select 'yes' option
+                                choice = option
+                        if choice == "":
+                            choice = options[0]  # Default to the first option if 'yes' is not found
                         self.select_dropdown(dropdown_field, choice)
 
                     elif 'currently living' in question_text or 'currently reside' in question_text:
