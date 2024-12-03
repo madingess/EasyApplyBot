@@ -163,28 +163,33 @@ class LinkedinEasyApply:
             raise Exception("Nothing to do here, moving forward...")
 
         try:
-            # Linked is using a random string to refer to "jobs-search-results-list"
-            # temporarily resorting to full XPATH as a workaround
+            # Define the XPaths for potential regions
+            xpath_region1 = "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
+            xpath_region2 = "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
+
+            # Attempt to locate the element using XPaths
             try:
-                job_results = self.browser.find_element(By.XPATH,
-                                                        "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div")
+                job_results = self.browser.find_element(By.XPATH, xpath_region1)
+                print("Found using xpath_region1")
             except NoSuchElementException:
-                try:
-                    job_results = self.browser.find_element(By.XPATH,
-                                                            "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div")
-                except NoSuchElementException:
-                    print("No job results found using the specified XPaths.")
-                    job_results = None
+                job_results = self.browser.find_element(By.XPATH, xpath_region2)
+                print("Found using xpath_region2")
 
-            # If job_results was found, perform scrolling
-            if job_results:
-                self.scroll_slow(job_results)
-                self.scroll_slow(job_results, step=300, reverse=True)
+            # Extract the random class name dynamically
+            random_class = job_results.get_attribute("class").split()[
+                0]  # Use only the first class if multiple are present
+            print(f"Random class detected: {random_class}")
 
-            # original code
-            # job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            # self.scroll_slow(job_results)
-            # self.scroll_slow(job_results, step=300, reverse=True)
+            # Use the detected class name to find the element
+            job_results_by_class = self.browser.find_element(By.CSS_SELECTOR, f".{random_class}")
+            print("Successfully located the element using the random class name.")
+
+            # Scroll logic
+            self.scroll_slow(job_results_by_class)  # Scroll down
+            self.scroll_slow(job_results_by_class, step=300, reverse=True)  # Scroll up
+
+        except NoSuchElementException:
+            print("No job results found using the specified XPaths or class.")
 
             job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
                 By.CLASS_NAME, 'jobs-search-results__list-item')
@@ -247,6 +252,7 @@ class LinkedinEasyApply:
                     while retries < max_retries:
                         try:
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                            # job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                             job_el.click()
                             break
 
