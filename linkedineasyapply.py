@@ -163,43 +163,51 @@ class LinkedinEasyApply:
             raise Exception("Nothing to do here, moving forward...")
 
         try:
-            # Define the XPaths for potential regions
+            # Define the XPaths for potentially different regions
             xpath_region1 = "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
             xpath_region2 = "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
+            job_list = []
 
             # Attempt to locate the element using XPaths
             try:
                 job_results = self.browser.find_element(By.XPATH, xpath_region1)
-                print("Found using xpath_region1")
+                ul_xpath = "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div/ul"
+                ul_element = self.browser.find_element(By.XPATH, ul_xpath)
+                ul_element_class = ul_element.get_attribute("class").split()[0]
+                print(f"Found using xpath_region1 and detected ul_element as {ul_element_class} based on {ul_xpath}")
+
             except NoSuchElementException:
                 job_results = self.browser.find_element(By.XPATH, xpath_region2)
-                print("Found using xpath_region2")
+                ul_xpath = "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div/ul"
+                ul_element = self.browser.find_element(By.XPATH, ul_xpath)
+                ul_element_class = ul_element.get_attribute("class").split()[0]
+                print(f"Found using xpath_region2 and detected ul_element as {ul_element_class} based on {ul_xpath}")
 
             # Extract the random class name dynamically
-            random_class = job_results.get_attribute("class").split()[
-                0]  # Use only the first class if multiple are present
+            random_class = job_results.get_attribute("class").split()[0]
             print(f"Random class detected: {random_class}")
 
             # Use the detected class name to find the element
             job_results_by_class = self.browser.find_element(By.CSS_SELECTOR, f".{random_class}")
+            print(f"job_results: {job_results_by_class}")
             print("Successfully located the element using the random class name.")
 
-            # Scroll logic
+            # Scroll logic (currently disabled for testing)
             self.scroll_slow(job_results_by_class)  # Scroll down
             self.scroll_slow(job_results_by_class, step=300, reverse=True)  # Scroll up
+
+            # Find job list elements
+            job_list = self.browser.find_elements(By.CLASS_NAME, ul_element_class)[0].find_elements(By.CLASS_NAME, 'scaffold-layout__list-item')
+            print(f"List of jobs: {job_list}")
+
+            if len(job_list) == 0:
+                raise Exception("No more jobs on this page.")
 
         except NoSuchElementException:
             print("No job results found using the specified XPaths or class.")
 
-            job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
-                By.CLASS_NAME, 'jobs-search-results__list-item')
-            if len(job_list) == 0:
-                raise Exception("No job class elements found in page")
-        except:
-            raise Exception("No more jobs on this page.")
-
-        if len(job_list) == 0:
-            raise Exception("No more jobs on this page.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
         for job_tile in job_list:
             job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
@@ -207,14 +215,15 @@ class LinkedinEasyApply:
             try:
                 ## patch to incorporate new 'verification' crap by LinkedIn
                 # job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text # original code
-                job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                 job_title = job_title_element.find_element(By.TAG_NAME, 'strong').text
 
-                link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').get_attribute('href').split('?')[0]
+                link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link').get_attribute('href').split('?')[0]
             except:
                 pass
             try:
-                company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text
+                # company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text # original code
+                company = job_tile.find_element(By.CLASS_NAME, 'artdeco-entity-lockup__subtitle').text
             except:
                 pass
             try:
@@ -251,8 +260,7 @@ class LinkedinEasyApply:
                     retries = 0
                     while retries < max_retries:
                         try:
-                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-                            # job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
+                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                             job_el.click()
                             break
 
@@ -864,7 +872,7 @@ class LinkedinEasyApply:
                         elif 'required' in upload_type.text.lower():
                             upload_button.send_keys(self.resume_dir)
         except:
-            # print("Failed to upload resume or cover letter!")
+            print("Failed to upload resume or cover letter!")
             pass
 
     def enter_text(self, element, text):
@@ -940,12 +948,8 @@ class LinkedinEasyApply:
 
     def write_to_file(self, company, job_title, link, location, search_location):
         to_write = [company, job_title, link, location, search_location, datetime.now()]
-        # file_path = self.output_file_directory + self.file_name + search_location + ".csv"
         file_path = self.file_name + ".csv"
         print(f'updated {file_path}.')
-
-        ## removed output logs with location name to have one file
-        # file_path = self.file_name + search_location + ".csv"
 
         with open(file_path, 'a', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
