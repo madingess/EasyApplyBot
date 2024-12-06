@@ -437,9 +437,15 @@ class LinkedinEasyApply:
         if len(frm_el) > 0:
             for el in frm_el:
                 # Radio check
+
+                # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
+                radio_question_class_name = 'fb-dash-form-element__label'
+                radio_dropdown_class_name = 'data-test-text-entity-list-form-select'
+
                 try:
-                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-                    radios = question.find_elements(By.CLASS_NAME, 'fb-text-selectable__option')
+                    # question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+                    question = el.find_element(By.CLASS_NAME, radio_question_class_name)
+                    radios = question.find_elements(By.CLASS_NAME, radio_dropdown_class_name)
                     if len(radios) == 0:
                         raise Exception("No radio found in element")
 
@@ -539,7 +545,12 @@ class LinkedinEasyApply:
 
                 # Questions check
                 try:
-                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+
+                    # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
+                    text_question_class_name = 'artdeco-text-input--label'
+                    text_dropdown_class_name = 'artdeco-text-input--input'
+
+                    question = el.find_element(By.CLASS_NAME, text_question_class_name)
                     question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
 
                     txt_field_visible = False
