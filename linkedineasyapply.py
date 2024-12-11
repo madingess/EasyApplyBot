@@ -312,6 +312,7 @@ class LinkedinEasyApply:
 
         try:
             job_description_area = self.browser.find_element(By.CLASS_NAME, "jobs-search__job-details--container")
+            print (f"{job_description_area}")
             self.scroll_slow(job_description_area, end=1600)
             self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
         except:
@@ -433,7 +434,11 @@ class LinkedinEasyApply:
 
     def additional_questions(self):
         # pdb.set_trace() ## debugging crap
-        frm_el = self.browser.find_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
+        additional_questions_group = 'jobs-easy-apply-modal__content'
+
+        frm_el = self.browser.find_elements(By.CLASS_NAME, additional_questions_group)
+        print (frm_el)
+
         if len(frm_el) > 0:
             for el in frm_el:
                 # Radio check
@@ -548,10 +553,11 @@ class LinkedinEasyApply:
 
                     # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
                     text_question_class_name = 'artdeco-text-input--label'
-                    text_dropdown_class_name = 'artdeco-text-input--input'
 
                     question = el.find_element(By.CLASS_NAME, text_question_class_name)
+                    question_text = question.text.lower()
                     question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
+                    print( question_text )
 
                     txt_field_visible = False
                     try:
@@ -649,7 +655,11 @@ class LinkedinEasyApply:
 
                 # Dropdown check
                 try:
-                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+                    # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
+                    text_dropdown_class_name = 'artdeco-text-input--input'
+
+                    # question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element') ## original code
+                    question = el.find_element(By.CLASS_NAME, text_dropdown_class_name)
                     question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
                     dropdown_field = question.find_element(By.TAG_NAME, 'select')
 
@@ -929,15 +939,35 @@ class LinkedinEasyApply:
 
     def fill_up(self):
         try:
-            easy_apply_content = self.browser.find_element(By.CLASS_NAME, 'jobs-easy-apply-content')
-            b4 = easy_apply_content.find_element(By.CLASS_NAME, 'pb4')
+            additional_questions_group_xpath = '/html/body/div[4]/div/div/div[2]/div/div[2]/form/div/div'
+            additional_questions_group_xpath_class = self.browser.find_element(By.XPATH,
+                                                                                additional_questions_group_xpath)
+            print(f"That's what I found... {additional_questions_group_xpath_class}")
+
+            additional_questions_group = additional_questions_group_xpath_class.get_attribute("class")  # .split()[0]
+            print(f"Additional Qs {additional_questions_group} based on {additional_questions_group_xpath}")
+
+            easy_apply_content = self.browser.find_element(By.CLASS_NAME, additional_questions_group)
+            print(f"easy_apply_content {easy_apply_content}")
+
+            # easy_apply_content = self.browser.find_element(By.CLASS_NAME, 'jobs-easy-apply-content')
+            # b4 = easy_apply_content.find_element(By.CLASS_NAME, 'pb4')
+            # pb4 = easy_apply_content.find_elements(By.CLASS_NAME, 'pb4')
+
+            # b4 = easy_apply_content.find_element(By.CLASS_NAME, 'ph5')
+            b4 = easy_apply_content.find_element(By.CLASS_NAME, 'b4')
+            print (b4)
+
             pb4 = easy_apply_content.find_elements(By.CLASS_NAME, 'pb4')
+            print (pb4)
+
             if len(pb4) == 0:
                 raise Exception("No pb4 class elements found in element")
             if len(pb4) > 0:
                 for pb in pb4:
                     try:
                         label = pb.find_element(By.TAG_NAME, 'h3').text.lower()
+                        print (f"Addiitional Qs label {label}")
                         try:
                             self.additional_questions()
                         except:
