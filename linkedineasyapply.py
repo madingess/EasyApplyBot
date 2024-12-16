@@ -440,18 +440,17 @@ class LinkedinEasyApply:
         for question in questions:
             try:
                 # Radio check
-                # TODO: Test and correct radio question fillup
+                radio_fieldset = question.find_element(By.TAG_NAME, 'fieldset')
+                question_span = radio_fieldset.find_element(By.CLASS_NAME, 'fb-dash-form-element__label').find_elements(By.TAG_NAME, 'span')[0]
+                radio_text = question_span.text.lower()
+                print(f"Radio question text: {radio_text}")  # TODO: Put logging behind debug flag
 
-                radio_question_class_name = 'fb-dash-form-element__label'
-                radio_dropdown_class_name = 'data-test-text-entity-list-form-select'
-                # question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-                question = question.find_element(By.CLASS_NAME, radio_question_class_name)
-                radios = question.find_elements(By.CLASS_NAME, radio_dropdown_class_name)
-                if len(radios) == 0:
-                    raise Exception("No radio found in element")
+                radio_labels = radio_fieldset.find_elements(By.TAG_NAME, 'label')
+                radio_options = [text.text.lower() for text in radio_labels]
+                print(f"radio options: {radio_options}")  # TODO: Put logging behind debug flag
+                if len(radio_options) == 0:
+                    raise Exception("No radio options found in question")
 
-                radio_text = question.text.lower()
-                radio_options = [text.text.lower() for text in radios]
                 answer = "yes"
 
                 if 'driver\'s licence' in radio_text or 'driver\'s license' in radio_text:
@@ -527,19 +526,20 @@ class LinkedinEasyApply:
                     answer = radio_options[len(radio_options) - 1]
                     self.record_unprepared_question("radio", radio_text)
 
+                print(f"Choosing answer: {answer}")  # TODO: Put logging behind debug flag
                 i = 0
                 to_select = None
-                for radio in radios:
+                for radio in radio_labels:
                     if answer in radio.text.lower():
-                        to_select = radios[i]
+                        to_select = radio_labels[i]
                     i += 1
 
                 if to_select is None:
-                    to_select = radios[len(radios) - 1]
+                    to_select = radio_labels[len(radio_labels) - 1]
 
-                self.radio_select(to_select, answer, len(radios) > 2)
+                to_select.click()
 
-                if radios != []:
+                if radio_labels:
                     continue
             except:
                 print("An exception occurred while filling up radio field")  # TODO: Put logging behind debug flag
@@ -547,7 +547,7 @@ class LinkedinEasyApply:
             # Questions check
             try:
                 question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
-                print( question_text )
+                print( question_text )  # TODO: Put logging behind debug flag
 
                 txt_field_visible = False
                 try:
@@ -645,6 +645,7 @@ class LinkedinEasyApply:
 
             # Dropdown check
             try:
+                # TODO: Correct dropdown field selection
                 question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
                 dropdown_field = question.find_element(By.TAG_NAME, 'select')
 
@@ -894,8 +895,6 @@ class LinkedinEasyApply:
         label = element.find_element(By.TAG_NAME, 'label')
         if label_text in label.text.lower() or clickLast == True:
             label.click()
-        else:
-            pass
 
     # Contact info fill-up
     def contact_info(self, form):
@@ -967,7 +966,7 @@ class LinkedinEasyApply:
             print(question_text)
 
     def scroll_slow(self, scrollable_element, start=0, end=3600, step=100, reverse=False):
-        return
+        return  # TODO: Remove this line
         if reverse:
             start, end = end, start
             step = -step
