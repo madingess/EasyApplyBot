@@ -1,4 +1,4 @@
-import yaml
+import yaml, os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -6,30 +6,34 @@ from validate_email import validate_email
 from webdriver_manager.chrome import ChromeDriverManager
 from linkedineasyapply import LinkedinEasyApply
 
-
 def init_browser():
     browser_options = Options()
-    options = ['--disable-blink-features',
-               '--no-sandbox',
-               '--start-maximized',
-               '--disable-extensions',
-               '--ignore-certificate-errors',
-               '--disable-blink-features=AutomationControlled',
-               '--remote-debugging-port=9222']
+    options = [
+        '--disable-blink-features',
+        '--no-sandbox',
+        '--start-maximized',
+        '--disable-extensions',
+        '--ignore-certificate-errors',
+        '--disable-blink-features=AutomationControlled',
+        '--remote-debugging-port=9222'
+    ]
+
+    # Restore session if possible (avoids login everytime)
+    user_data_dir = os.path.join(os.getcwd(), "chrome_bot")
+    browser_options.add_argument(f"user-data-dir={user_data_dir}")
 
     for option in options:
         browser_options.add_argument(option)
 
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=browser_options,)
-    driver.implicitly_wait(1) # wait time in seconds to allow loading of elements
+    driver = webdriver.Chrome(service=service, options=browser_options)
+    driver.implicitly_wait(1)  # Wait time in seconds to allow loading of elements
     driver.set_window_position(0, 0)
     driver.maximize_window()
     return driver
 
-
 def validate_yaml():
-    with open("../config.yaml", 'r') as stream:
+    with open("config.yaml", 'r', encoding='utf-8') as stream:
         try:
             parameters = yaml.safe_load(stream)
         except yaml.YAMLError as exc:

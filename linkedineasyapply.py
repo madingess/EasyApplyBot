@@ -1,6 +1,9 @@
-import time, random, csv, pyautogui, pdb, traceback, sys
+import time, random, csv, pyautogui, pdb, traceback, sys, os
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -21,8 +24,8 @@ class LinkedinEasyApply:
         self.residency = parameters.get('residentStatus', [])
         self.base_search_url = self.get_base_search_url(parameters)
         self.seen_jobs = []
-        self.file_name = "../output_"
-        self.unprepared_questions_file_name = "../unprepared_questions"
+        self.file_name = "output"
+        self.unprepared_questions_file_name = "unprepared_questions"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
         if 'coverLetter' in parameters['uploads']:
@@ -41,22 +44,51 @@ class LinkedinEasyApply:
 
     def login(self):
         try:
-            self.browser.get("https://www.linkedin.com/login")
-            time.sleep(random.uniform(5, 10))
-            self.browser.find_element(By.ID, "username").send_keys(self.email)
-            self.browser.find_element(By.ID, "password").send_keys(self.password)
-            self.browser.find_element(By.CSS_SELECTOR, ".btn__primary--large").click()
-            time.sleep(random.uniform(5, 10))
+            # Check if the "chrome_bot" directory exists
+            print("Attempting to restore previous session...")
+            if os.path.exists("chrome_bot"):
+                self.browser.get("https://www.linkedin.com/feed/")
+                time.sleep(random.uniform(5, 10))
+
+                # Check if the current URL is the feed page
+                if self.browser.current_url != "https://www.linkedin.com/feed/":
+                    print("Feed page not loaded, proceeding to login.")
+                    self.load_login_page_and_login()
+            else:
+                print("No session found, proceeding to login.")
+                self.load_login_page_and_login()
+
         except TimeoutException:
-            raise Exception("Could not login!")
+            print("Timeout occurred, checking for security challenges...")
+            self.security_check()
+            # raise Exception("Could not login!")
 
     def security_check(self):
         current_url = self.browser.current_url
         page_source = self.browser.page_source
 
-        if '/checkpoint/challenge/' in current_url or 'security check' in page_source:
+        if '/checkpoint/challenge/' in current_url or 'security check' in page_source or 'quick verification' in page_source:
             input("Please complete the security check and press enter on this console when it is done.")
             time.sleep(random.uniform(5.5, 10.5))
+
+    def load_login_page_and_login(self):
+        self.browser.get("https://www.linkedin.com/login")
+
+        # Wait for the username field to be present
+        WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located((By.ID, "username"))
+        )
+
+        self.browser.find_element(By.ID, "username").send_keys(self.email)
+        self.browser.find_element(By.ID, "password").send_keys(self.password)
+        self.browser.find_element(By.CSS_SELECTOR, ".btn__primary--large").click()
+
+        # Wait for the feed page to load after login
+        WebDriverWait(self.browser, 10).until(
+            EC.url_contains("https://www.linkedin.com/feed/")
+        )
+
+        time.sleep(random.uniform(5, 10))
 
     def start_applying(self):
         searches = list(product(self.positions, self.locations))
@@ -131,30 +163,67 @@ class LinkedinEasyApply:
             raise Exception("Nothing to do here, moving forward...")
 
         try:
-            job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            self.scroll_slow(job_results)
-            self.scroll_slow(job_results, step=300, reverse=True)
+            # Define the XPaths for potentially different regions
+            xpath_region1 = "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
+            xpath_region2 = "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
+            job_list = []
 
-            job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
-                By.CLASS_NAME, 'jobs-search-results__list-item')
+            # Attempt to locate the element using XPaths
+            try:
+                job_results = self.browser.find_element(By.XPATH, xpath_region1)
+                ul_xpath = "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div/ul"
+                ul_element = self.browser.find_element(By.XPATH, ul_xpath)
+                ul_element_class = ul_element.get_attribute("class").split()[0]
+                print(f"Found using xpath_region1 and detected ul_element as {ul_element_class} based on {ul_xpath}")
+
+            except NoSuchElementException:
+                job_results = self.browser.find_element(By.XPATH, xpath_region2)
+                ul_xpath = "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div/ul"
+                ul_element = self.browser.find_element(By.XPATH, ul_xpath)
+                ul_element_class = ul_element.get_attribute("class").split()[0]
+                print(f"Found using xpath_region2 and detected ul_element as {ul_element_class} based on {ul_xpath}")
+
+            # Extract the random class name dynamically
+            random_class = job_results.get_attribute("class").split()[0]
+            print(f"Random class detected: {random_class}")
+
+            # Use the detected class name to find the element
+            job_results_by_class = self.browser.find_element(By.CSS_SELECTOR, f".{random_class}")
+            print(f"job_results: {job_results_by_class}")
+            print("Successfully located the element using the random class name.")
+
+            # Scroll logic (currently disabled for testing)
+            self.scroll_slow(job_results_by_class)  # Scroll down
+            self.scroll_slow(job_results_by_class, step=300, reverse=True)  # Scroll up
+
+            # Find job list elements
+            job_list = self.browser.find_elements(By.CLASS_NAME, ul_element_class)[0].find_elements(By.CLASS_NAME, 'scaffold-layout__list-item')
+            print(f"List of jobs: {job_list}")
+
             if len(job_list) == 0:
-                raise Exception("No job class elements found in page")
-        except:
-            raise Exception("No more jobs on this page.")
+                raise Exception("No more jobs on this page.")
 
-        if len(job_list) == 0:
-            raise Exception("No more jobs on this page.")
+        except NoSuchElementException:
+            print("No job results found using the specified XPaths or class.")
+
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
         for job_tile in job_list:
             job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
 
             try:
-                job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text
-                link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').get_attribute('href').split('?')[0]
+                ## patch to incorporate new 'verification' crap by LinkedIn
+                # job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text # original code
+                job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
+                job_title = job_title_element.find_element(By.TAG_NAME, 'strong').text
+
+                link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link').get_attribute('href').split('?')[0]
             except:
                 pass
             try:
-                company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text
+                # company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text # original code
+                company = job_tile.find_element(By.CLASS_NAME, 'artdeco-entity-lockup__subtitle').text
             except:
                 pass
             try:
@@ -191,7 +260,7 @@ class LinkedinEasyApply:
                     retries = 0
                     while retries < max_retries:
                         try:
-                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                             job_el.click()
                             break
 
@@ -209,19 +278,20 @@ class LinkedinEasyApply:
                             print(f"An application for a job at {company} has been submitted earlier.")
                     except:
                         temp = self.file_name
-                        self.file_name = "../failed_"
+                        self.file_name = "failed"
                         print("Failed to apply to job. Please submit a bug report with this link: " + link)
                         try:
                             self.write_to_file(company, job_title, link, job_location, location)
                         except:
                             pass
                         self.file_name = temp
+                        print(f'updated {temp}.')
 
                     try:
                         self.write_to_file(company, job_title, link, job_location, location)
                     except Exception:
                         print(
-                            "Unable to save the job information in the file. The job title or company cannot contain special characters,")
+                            f"Unable to save the job information in the file. The job title {job_title} or company {company} cannot contain special characters,")
                         traceback.print_exc()
                 except:
                     traceback.print_exc()
@@ -242,6 +312,7 @@ class LinkedinEasyApply:
 
         try:
             job_description_area = self.browser.find_element(By.CLASS_NAME, "jobs-search__job-details--container")
+            print (f"{job_description_area}")
             self.scroll_slow(job_description_area, end=1600)
             self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
         except:
@@ -270,13 +341,31 @@ class LinkedinEasyApply:
                 error_messages = [
                     'enter a valid',
                     'enter a decimal',
+                    'Enter a whole number'
+                    'Enter a whole number between 0 and 99',
                     'file is required',
+                    'whole number',
                     'make a selection',
                     'select checkbox to proceed',
                     'saisissez un numéro',
                     '请输入whole编号',
+                    '请输入decimal编号',
+                    '长度超过 0.0',
                     'Numéro de téléphone',
-                    'use the format'
+                    'Introduce un número de whole entre',
+                    'Inserisci un numero whole compreso',
+                    'Preguntas adicionales',
+                    'Insira um um número',
+                    'Cuántos años'
+                    'use the format',
+                    'A file is required',
+                    '请选择',
+                    '请 选 择',
+                    'Inserisci',
+                    'wholenummer',
+                    'Wpisz liczb',
+                    'zakresu od',
+                    'tussen'
                 ]
 
                 if any(error in self.browser.page_source.lower() for error in error_messages):
@@ -344,14 +433,24 @@ class LinkedinEasyApply:
             return 'no'
 
     def additional_questions(self):
-        # pdb.set_trace()
-        frm_el = self.browser.find_elements(By.CLASS_NAME, 'jobs-easy-apply-form-section__grouping')
+        # pdb.set_trace() ## debugging crap
+        additional_questions_group = 'jobs-easy-apply-modal__content'
+
+        frm_el = self.browser.find_elements(By.CLASS_NAME, additional_questions_group)
+        print (frm_el)
+
         if len(frm_el) > 0:
             for el in frm_el:
                 # Radio check
+
+                # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
+                radio_question_class_name = 'fb-dash-form-element__label'
+                radio_dropdown_class_name = 'data-test-text-entity-list-form-select'
+
                 try:
-                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
-                    radios = question.find_elements(By.CLASS_NAME, 'fb-text-selectable__option')
+                    # question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+                    question = el.find_element(By.CLASS_NAME, radio_question_class_name)
+                    radios = question.find_elements(By.CLASS_NAME, radio_dropdown_class_name)
                     if len(radios) == 0:
                         raise Exception("No radio found in element")
 
@@ -451,8 +550,14 @@ class LinkedinEasyApply:
 
                 # Questions check
                 try:
-                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+
+                    # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
+                    text_question_class_name = 'artdeco-text-input--label'
+
+                    question = el.find_element(By.CLASS_NAME, text_question_class_name)
+                    question_text = question.text.lower()
                     question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
+                    print( question_text )
 
                     txt_field_visible = False
                     try:
@@ -550,7 +655,11 @@ class LinkedinEasyApply:
 
                 # Dropdown check
                 try:
-                    question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element')
+                    # better keep this crap as variables because linkedin devs suffer from sadistic personality disorder
+                    text_dropdown_class_name = 'artdeco-text-input--input'
+
+                    # question = el.find_element(By.CLASS_NAME, 'jobs-easy-apply-form-element') ## original code
+                    question = el.find_element(By.CLASS_NAME, text_dropdown_class_name)
                     question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
                     dropdown_field = question.find_element(By.TAG_NAME, 'select')
 
@@ -638,6 +747,15 @@ class LinkedinEasyApply:
                                     choice = option
                         if choice == "":
                             choice = options[len(options) - 1]
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif 'above 18' in question_text.lower():  # Check for "above 18" in the question text
+                        choice = ""
+                        for option in options:
+                            if 'yes' in option.lower():  # Select 'yes' option
+                                choice = option
+                        if choice == "":
+                            choice = options[0]  # Default to the first option if 'yes' is not found
                         self.select_dropdown(dropdown_field, choice)
 
                     elif 'currently living' in question_text or 'currently reside' in question_text:
@@ -775,7 +893,7 @@ class LinkedinEasyApply:
                         elif 'required' in upload_type.text.lower():
                             upload_button.send_keys(self.resume_dir)
         except:
-            # print("Failed to upload resume or cover letter!")
+            print("Failed to upload resume or cover letter!")
             pass
 
     def enter_text(self, element, text):
@@ -821,15 +939,35 @@ class LinkedinEasyApply:
 
     def fill_up(self):
         try:
-            easy_apply_content = self.browser.find_element(By.CLASS_NAME, 'jobs-easy-apply-content')
-            b4 = easy_apply_content.find_element(By.CLASS_NAME, 'pb4')
+            additional_questions_group_xpath = '/html/body/div[4]/div/div/div[2]/div/div[2]/form/div/div'
+            additional_questions_group_xpath_class = self.browser.find_element(By.XPATH,
+                                                                                additional_questions_group_xpath)
+            print(f"That's what I found... {additional_questions_group_xpath_class}")
+
+            additional_questions_group = additional_questions_group_xpath_class.get_attribute("class")  # .split()[0]
+            print(f"Additional Qs {additional_questions_group} based on {additional_questions_group_xpath}")
+
+            easy_apply_content = self.browser.find_element(By.CLASS_NAME, additional_questions_group)
+            print(f"easy_apply_content {easy_apply_content}")
+
+            # easy_apply_content = self.browser.find_element(By.CLASS_NAME, 'jobs-easy-apply-content')
+            # b4 = easy_apply_content.find_element(By.CLASS_NAME, 'pb4')
+            # pb4 = easy_apply_content.find_elements(By.CLASS_NAME, 'pb4')
+
+            # b4 = easy_apply_content.find_element(By.CLASS_NAME, 'ph5')
+            b4 = easy_apply_content.find_element(By.CLASS_NAME, 'b4')
+            print (b4)
+
             pb4 = easy_apply_content.find_elements(By.CLASS_NAME, 'pb4')
+            print (pb4)
+
             if len(pb4) == 0:
                 raise Exception("No pb4 class elements found in element")
             if len(pb4) > 0:
                 for pb in pb4:
                     try:
                         label = pb.find_element(By.TAG_NAME, 'h3').text.lower()
+                        print (f"Addiitional Qs label {label}")
                         try:
                             self.additional_questions()
                         except:
@@ -850,11 +988,11 @@ class LinkedinEasyApply:
             pass
 
     def write_to_file(self, company, job_title, link, location, search_location):
-        to_write = [company, job_title, link, location, datetime.now()]
-        # file_path = self.output_file_directory + self.file_name + search_location + ".csv"
-        file_path = self.file_name + search_location + ".csv"
+        to_write = [company, job_title, link, location, search_location, datetime.now()]
+        file_path = self.file_name + ".csv"
+        print(f'updated {file_path}.')
 
-        with open(file_path, 'a') as f:
+        with open(file_path, 'a', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(to_write)
 
@@ -866,6 +1004,7 @@ class LinkedinEasyApply:
             with open(file_path, 'a') as f:
                 writer = csv.writer(f)
                 writer.writerow(to_write)
+                print(f'Updated {file_path} with {to_write}.')
         except:
             print(
                 "Special characters in questions are not allowed. Failed to update unprepared questions log.")

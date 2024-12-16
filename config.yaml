@@ -140,8 +140,9 @@ languages:
 noticePeriod: 2
 
 # ------------ Additional parameters: years of experience ---------------
-# How many years of work experience do you have ...? (whole numbers only)
+# How many years of work experience do you have ...? (whole numbers only).
 # You may add more skills depending on your industry or profession at the bottom.
+# Use `unprepared questions.csv` to add more depending on your use case.
 experience:
  # normal ones
  Accounting/Auditing: 0
