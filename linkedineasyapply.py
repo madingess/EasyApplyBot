@@ -633,7 +633,7 @@ class LinkedinEasyApply:
 
             # Date Check
             try:
-                date_picker = el.find_element(By.CLASS_NAME, 'artdeco-datepicker__input ')
+                date_picker = question.find_element(By.CLASS_NAME, 'artdeco-datepicker__input ')
                 date_picker.clear()
                 date_picker.send_keys(date.today().strftime("%m/%d/%y"))
                 time.sleep(3)
@@ -645,12 +645,13 @@ class LinkedinEasyApply:
 
             # Dropdown check
             try:
-                # TODO: Correct dropdown field selection
                 question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
+                print(f"Dropdown question text: {question_text}")  # TODO: Put logging behind debug flag
                 dropdown_field = question.find_element(By.TAG_NAME, 'select')
 
                 select = Select(dropdown_field)
                 options = [options.text for options in select.options]
+                print(f"Dropdown options: {options}")  # TODO: Put logging behind debug flag
 
                 if 'proficiency' in question_text:
                     proficiency = "None"
