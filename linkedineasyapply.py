@@ -967,7 +967,6 @@ class LinkedinEasyApply:
             print(question_text)
 
     def scroll_slow(self, scrollable_element, start=0, end=3600, step=100, reverse=False):
-        return  # TODO: Remove this line
         if reverse:
             start, end = end, start
             step = -step
