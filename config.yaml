@@ -29,6 +29,8 @@ jobTypes:
  temporary: True
  internship: False
  other: False
+ Freelance: True
+ Apprenticeship: True
  volunteer: False
 
 # Set ONLY one as True to suit your preference.
