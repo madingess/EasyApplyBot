@@ -44,6 +44,7 @@ def validate_yaml():
                         'disableAntiLock',
                         'remote',
                         'lessthanTenApplicants',
+                        'newestPostingsFirst',
                         'experienceLevel',
                         'jobTypes',
                         'date',
@@ -69,6 +70,7 @@ def validate_yaml():
     assert isinstance(parameters['disableAntiLock'], bool)
     assert isinstance(parameters['remote'], bool)
     assert isinstance(parameters['lessthanTenApplicants'], bool)
+    assert isinstance(parameters['newestPostingsFirst'], bool)
     assert isinstance(parameters['residentStatus'], bool)
     assert len(parameters['experienceLevel']) > 0
     experience_level = parameters.get('experienceLevel', [])

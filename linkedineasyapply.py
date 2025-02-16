@@ -163,6 +163,9 @@ class LinkedinEasyApply:
             raise Exception("Nothing to do here, moving forward...")
 
         try:
+            # TODO: Can we simply use class name scaffold-layout__list for the scroll (necessary to show all li in the dom?)? Does it need to be the ul within the scaffold list?
+            #      Then we can simply get all the li scaffold-layout__list-item elements within it for the jobs
+
             # Define the XPaths for potentially different regions
             xpath_region1 = "/html/body/div[6]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
             xpath_region2 = "/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[1]/div"
@@ -198,10 +201,10 @@ class LinkedinEasyApply:
 
             # Find job list elements
             job_list = self.browser.find_elements(By.CLASS_NAME, ul_element_class)[0].find_elements(By.CLASS_NAME, 'scaffold-layout__list-item')
-            print(f"List of jobs: {job_list}")
+            print(f"Found {len(job_list)} jobs on this page")
 
             if len(job_list) == 0:
-                raise Exception("No more jobs on this page.")
+                raise Exception("No more jobs on this page.")  # TODO: Seemed to encounter an error where we ran out of jobs and didn't go to next page, perhaps because I didn't have scrolling on?
 
         except NoSuchElementException:
             print("No job results found using the specified XPaths or class.")
@@ -260,6 +263,7 @@ class LinkedinEasyApply:
                     retries = 0
                     while retries < max_retries:
                         try:
+                            # TODO: This is throwing an exception when running out of jobs on a page
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                             job_el.click()
                             break
@@ -546,6 +550,9 @@ class LinkedinEasyApply:
 
             # Questions check
             try:
+                # TODO: There seems to be an issue with decimal text inputs, have not yet captured html tag
+                #           Error says the value must be a value greater than decimal 0.0
+
                 question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
                 print( question_text )  # TODO: Put logging behind debug flag
 
@@ -988,6 +995,7 @@ class LinkedinEasyApply:
     def get_base_search_url(self, parameters):
         remote_url = ""
         lessthanTenApplicants_url = ""
+        newestPostingsFirst_url = ""
 
         if parameters.get('remote'):
             remote_url = "&f_WT=2"
@@ -997,6 +1005,9 @@ class LinkedinEasyApply:
 
         if parameters['lessthanTenApplicants']:
             lessthanTenApplicants_url = "&f_EA=true"
+
+        if parameters['newestPostingsFirst']:
+            newestPostingsFirst_url += "&sortBy=DD"
 
         level = 1
         experience_level = parameters.get('experienceLevel', [])
@@ -1025,7 +1036,7 @@ class LinkedinEasyApply:
 
         easy_apply_url = "&f_AL=true"
 
-        extra_search_terms = [distance_url, remote_url, lessthanTenApplicants_url, job_types_url, experience_url]
+        extra_search_terms = [distance_url, remote_url, lessthanTenApplicants_url, newestPostingsFirst_url, job_types_url, experience_url]
         extra_search_terms_str = '&'.join(
             term for term in extra_search_terms if len(term) > 0) + easy_apply_url + date_url
 
