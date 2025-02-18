@@ -566,12 +566,11 @@ class LinkedinEasyApply:
 
                 if 'numeric' in txt_field.get_attribute('id').lower():
                     # For decimal and integer response fields, the id contains 'numeric' while the type remains 'text' 
-                    text_field_type = 'numeric'  # TODO: Verify this change
+                    text_field_type = 'numeric'
                 elif 'text' in txt_field.get_attribute('type').lower():
                     text_field_type = 'text'
                 else:
                     raise Exception("Could not determine input type of input field!")
-                print(f"Text field type: {text_field_type}")  # TODO: Put logging behind debug flag
 
                 to_enter = ''
                 if 'experience' in question_text or 'how many years in' in question_text:
@@ -627,8 +626,6 @@ class LinkedinEasyApply:
 
                 if text_field_type == 'numeric':
                     if not isinstance(to_enter, (int, float)):
-                        print(f"to_enter is not an int or float: {to_enter}")  # TODO: Put logging behind debug flag
-                        print(f"using default value of 0")
                         to_enter = 0
                 elif to_enter == '':
                     to_enter = " ‏‏‎ "
