@@ -550,9 +550,6 @@ class LinkedinEasyApply:
 
             # Questions check
             try:
-                # TODO: There seems to be an issue with decimal text inputs, have not yet captured html tag
-                #           Error says the value must be a value greater than decimal 0.0
-
                 question_text = question.find_element(By.TAG_NAME, 'label').text.lower()
                 print( question_text )  # TODO: Put logging behind debug flag
 
@@ -567,13 +564,14 @@ class LinkedinEasyApply:
                     except:
                         raise Exception("Could not find textarea or input tag for question")
 
-                text_field_type = txt_field.get_attribute('type').lower()
-                if 'numeric' in text_field_type:  # TODO: test numeric type
-                    text_field_type = 'numeric'
-                elif 'text' in text_field_type:
+                if 'numeric' in txt_field.get_attribute('id').lower():
+                    # For decimal and integer response fields, the id contains 'numeric' while the type remains 'text' 
+                    text_field_type = 'numeric'  # TODO: Verify this change
+                elif 'text' in txt_field.get_attribute('type').lower():
                     text_field_type = 'text'
                 else:
                     raise Exception("Could not determine input type of input field!")
+                print(f"Text field type: {text_field_type}")  # TODO: Put logging behind debug flag
 
                 to_enter = ''
                 if 'experience' in question_text or 'how many years in' in question_text:
@@ -629,6 +627,8 @@ class LinkedinEasyApply:
 
                 if text_field_type == 'numeric':
                     if not isinstance(to_enter, (int, float)):
+                        print(f"to_enter is not an int or float: {to_enter}")  # TODO: Put logging behind debug flag
+                        print(f"using default value of 0")
                         to_enter = 0
                 elif to_enter == '':
                     to_enter = " ‏‏‎ "
@@ -974,6 +974,7 @@ class LinkedinEasyApply:
             print(question_text)
 
     def scroll_slow(self, scrollable_element, start=0, end=3600, step=100, reverse=False):
+        return
         if reverse:
             start, end = end, start
             step = -step
