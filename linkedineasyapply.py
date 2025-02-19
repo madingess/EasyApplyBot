@@ -40,7 +40,6 @@ class AIResponseGenerator:
         Personal Information:
         - Name: {self.personal_info['First Name']} {self.personal_info['Last Name']}
         - Current Role: {self.experience.get('currentRole', '')}
-        - Years of Experience: {self.experience.get('default', 0)} years
         - Skills: {', '.join(self.experience.keys())}
         - Languages: {', '.join(f'{lang}: {level}' for lang, level in self.languages.items())}
         - Professional Summary: {self.personal_info.get('MessageToManager', '')}
