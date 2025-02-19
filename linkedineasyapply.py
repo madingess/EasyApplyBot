@@ -631,11 +631,13 @@ class LinkedinEasyApply:
                             break
 
                 elif 'experience' in radio_text:
-                    for experience in self.experience:
-                        if experience.lower() in radio_text:
-                            answer = "yes"
-                            break
-                    # TODO: Want to always indicate yes here if the question asks about experience?
+                    if self.experience_default > 0:
+                        answer = 'yes'
+                    else:
+                        for experience in self.experience:
+                            if experience.lower() in radio_text:
+                                answer = "yes"
+                                break
 
                 elif 'data retention' in radio_text:
                     answer = 'no'
@@ -958,10 +960,13 @@ class LinkedinEasyApply:
 
                 elif 'experience' in question_text or 'understanding' in question_text or 'familiar' in question_text or 'comfortable' in question_text or 'able to' in question_text:
                     answer = 'no'
-                    for experience in self.experience:
-                        if experience.lower() in question_text and self.experience[experience] > 0:
-                            answer = 'yes'
-                            break
+                    if self.experience_default > 0:
+                        answer = 'yes'
+                    else:
+                        for experience in self.experience:
+                            if experience.lower() in question_text and self.experience[experience] > 0:
+                                answer = 'yes'
+                                break
                     if answer == 'no':
                         # record unlisted experience as unprepared questions
                         self.record_unprepared_question("dropdown", question_text)
