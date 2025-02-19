@@ -1,4 +1,4 @@
-import time, random, csv, pyautogui, traceback, os
+import time, random, csv, pyautogui, traceback, os, re
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -49,17 +49,20 @@ class AIResponseGenerator:
         {self.resume_content}
         """
 
-    def generate_response(self, question_text, response_type="text", max_tokens=100):
+    def generate_response(self, question_text, response_type="text", options=None, max_tokens=100):
         """
         Generate a response using OpenAI's API
         
         Args:
             question_text: The application question to answer
-            response_type: "text" or "numeric"
+            response_type: "text", "numeric", or "choice"
+            options: For "choice" type, a list of tuples containing (index, text) of possible answers
             max_tokens: Maximum length of response
             
         Returns:
-            Generated response or None if API key not configured
+            - For text: Generated text response or None
+            - For numeric: Integer value or None
+            - For choice: Integer index of selected option or None
         """
         if not self._client:
             return None
@@ -69,14 +72,20 @@ class AIResponseGenerator:
             
             system_prompt = {
                 "text": "You are a helpful assistant answering job application questions professionally and concisely. Use the candidate's background information and resume to personalize responses.",
-                "numeric": "You are a helpful assistant providing numeric answers to job application questions. Based on the candidate's experience, provide a single number as your response. No explanation needed."
+                "numeric": "You are a helpful assistant providing numeric answers to job application questions. Based on the candidate's experience, provide a single number as your response. No explanation needed.",
+                "choice": "You are a helpful assistant selecting the most appropriate answer choice for job application questions. Based on the candidate's background, select the best option by returning only its index number. No explanation needed."
             }[response_type]
+
+            user_content = f"Using this candidate's background and resume:\n{context}\n\nPlease answer this job application question: {question_text}"
+            if response_type == "choice" and options:
+                options_text = "\n".join([f"{idx}: {text}" for idx, text in options])
+                user_content += f"\n\nSelect the most appropriate answer by providing its index number from these options:\n{options_text}"
 
             response = self._client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Using this candidate's background and resume:\n{context}\n\nPlease answer this job application question: {question_text}"}
+                    {"role": "user", "content": user_content}
                 ],
                 max_tokens=max_tokens,
                 temperature=0.7
@@ -87,11 +96,19 @@ class AIResponseGenerator:
             
             if response_type == "numeric":
                 # Extract first number from response
-                import re
                 numbers = re.findall(r'\d+', answer)
                 if numbers:
                     return int(numbers[0])
                 return 0
+            elif response_type == "choice":
+                # Extract the index number from the response
+                numbers = re.findall(r'\d+', answer)
+                if numbers and options:
+                    index = int(numbers[0])
+                    # Ensure index is within valid range
+                    if 0 <= index < len(options):
+                        return index
+                return None  # Return None if the index is not within the valid range
                 
             return answer
             
@@ -355,6 +372,7 @@ class LinkedinEasyApply:
             if company.lower() not in [word.lower() for word in self.company_blacklist] and \
                     poster.lower() not in [word.lower() for word in self.poster_blacklist] and \
                     contains_blacklisted_keywords is False and link not in self.seen_jobs:
+                    # TODO Add filtering here to ask AI if the job is worth applying to, considering the limited number of daily applications available
                 try:
                     max_retries = 3
                     retries = 0
@@ -544,19 +562,20 @@ class LinkedinEasyApply:
                 radio_fieldset = question.find_element(By.TAG_NAME, 'fieldset')
                 question_span = radio_fieldset.find_element(By.CLASS_NAME, 'fb-dash-form-element__label').find_elements(By.TAG_NAME, 'span')[0]
                 radio_text = question_span.text.lower()
-                print(f"Radio question text: {radio_text}")  # TODO: Put logging behind debug flag
+                print(f"Radio question text: {radio_text}")
 
                 radio_labels = radio_fieldset.find_elements(By.TAG_NAME, 'label')
-                radio_options = [text.text.lower() for text in radio_labels]
-                print(f"radio options: {radio_options}")  # TODO: Put logging behind debug flag
+                radio_options = [(i, text.text.lower()) for i, text in enumerate(radio_labels)]
+                print(f"radio options: {[opt[1] for opt in radio_options]}")
+                
                 if len(radio_options) == 0:
                     raise Exception("No radio options found in question")
 
-                answer = "yes"
+                answer = None
 
+                # Try to determine answer using existing logic
                 if 'driver\'s licence' in radio_text or 'driver\'s license' in radio_text:
                     answer = self.get_answer('driversLicence')
-
                 elif any(keyword in radio_text.lower() for keyword in
                          [
                              'Aboriginal', 'native', 'indigenous', 'tribe', 'first nations',
@@ -567,7 +586,7 @@ class LinkedinEasyApply:
                          ]):
                     negative_keywords = ['prefer', 'decline', 'don\'t', 'specified', 'none', 'no']
                     answer = next((option for option in radio_options if
-                                   any(neg_keyword in option.lower() for neg_keyword in negative_keywords)), None)
+                                   any(neg_keyword in option[1].lower() for neg_keyword in negative_keywords)), None)
 
                 elif 'assessment' in radio_text:
                     answer = self.get_answer("assessment")
@@ -617,33 +636,46 @@ class LinkedinEasyApply:
                         if experience.lower() in radio_text:
                             answer = "yes"
                             break
+                    # TODO: Want to always indicate yes here if the question asks about experience?
 
                 elif 'data retention' in radio_text:
                     answer = 'no'
 
                 elif 'sponsor' in radio_text:
                     answer = self.get_answer('requireVisa')
-                else:
-                    answer = radio_options[len(radio_options) - 1]
-                    self.record_unprepared_question("radio", radio_text)
-
-                print(f"Choosing answer: {answer}")  # TODO: Put logging behind debug flag
-                i = 0
+                
                 to_select = None
-                for radio in radio_labels:
-                    if answer in radio.text.lower():
-                        to_select = radio_labels[i]
-                    i += 1
+                if answer is not None:
+                    print(f"Choosing answer: {answer}")
+                    i = 0
+                    for radio in radio_labels:
+                        if answer in radio.text.lower():
+                            to_select = radio_labels[i]
+                            break
+                        i += 1
+                    if to_select is None:
+                        print("Answer not found in radio options")
 
                 if to_select is None:
-                    to_select = radio_labels[len(radio_labels) - 1]
+                    print("No answer determined")
+                    self.record_unprepared_question("radio", radio_text)
 
+                    # Since no response can be determined, we use AI to identify the best responseif available, falling back to the final option if the AI response is not available
+                    ai_response = self.ai_response_generator.generate_response(
+                        question_text,
+                        response_type="choice",
+                        options=radio_options
+                    )
+                    if ai_response is not None:
+                        to_select = radio_labels[ai_response]
+                    else:
+                        to_select = radio_labels[len(radio_labels) - 1]
                 to_select.click()
 
                 if radio_labels:
                     continue
-            except:
-                print("An exception occurred while filling up radio field")  # TODO: Put logging behind debug flag
+            except Exception as e:
+                print("An exception occurred while filling up radio field")
 
             # Questions check
             try:
@@ -944,14 +976,27 @@ class LinkedinEasyApply:
                     self.select_dropdown(dropdown_field, choice)
 
                 else:
-                    choice = ""
-                    for option in options:
-                        if 'yes' in option.lower():
-                            choice = option
-                    if choice == "":
-                        choice = options[len(options) - 1]
-                    self.select_dropdown(dropdown_field, choice)
+                    print(f"Unhandled dropdown question: {question_text}")
                     self.record_unprepared_question("dropdown", question_text)
+
+                    # Since no response can be determined, we use AI to identify the best responseif available, falling back "yes" or the final response if the AI response is not available
+                    choice = options[len(options) - 1]
+                    choices = [(i, option) for i, option in enumerate(options)]
+                    ai_response = self.ai_response_generator.generate_response(
+                        question_text,
+                        response_type="choice",
+                        options=choices
+                    )
+                    if ai_response is not None:
+                        choice = options[ai_response]
+                    else:
+                        choice = ""
+                        for option in options:
+                            if 'yes' in option.lower():
+                                choice = option
+
+                    print(f"Selected option: {choice}")
+                    self.select_dropdown(dropdown_field, choice)
                 continue
             except:
                 print("An exception occurred while filling up dropdown field")  # TODO: Put logging behind debug flag
