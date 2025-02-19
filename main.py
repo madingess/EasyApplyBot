@@ -137,6 +137,11 @@ def validate_yaml():
     for survey_question in eeo:
         assert eeo[survey_question] != ''
 
+    if parameters.get('openaiApiKey') == 'sk-proj-your-openai-api-key':
+        # Overwrite the default value with None to indicate internally that the OpenAI API key is not configured
+        print("OpenAI API key not configured. Defaulting to empty responses for text fields.")
+        parameters['openaiApiKey'] = None
+
     return parameters
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-import time, random, csv, pyautogui, pdb, traceback, sys, os
+import time, random, csv, pyautogui, traceback, os
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -9,12 +9,102 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from datetime import date, datetime
 from itertools import product
+from pypdf import PdfReader
+from openai import OpenAI
+
+class AIResponseGenerator:
+    def __init__(self, api_key, personal_info, experience, languages, resume_path):
+        self.personal_info = personal_info
+        self.experience = experience
+        self.languages = languages
+        self.resume_path = resume_path
+        self._resume_content = None
+        self._client = OpenAI(api_key=api_key) if api_key else None
+
+    @property
+    def resume_content(self):
+        if self._resume_content is None:
+            try:
+                content = []
+                reader = PdfReader(self.resume_path)
+                for page in reader.pages:
+                    content.append(page.extract_text())
+                self._resume_content = "\n".join(content)
+            except Exception as e:
+                print(f"Could not extract text from resume PDF: {str(e)}")
+                self._resume_content = ""
+        return self._resume_content
+
+    def _build_context(self):
+        return f"""
+        Personal Information:
+        - Name: {self.personal_info['First Name']} {self.personal_info['Last Name']}
+        - Current Role: {self.experience.get('currentRole', '')}
+        - Years of Experience: {self.experience.get('default', 0)} years
+        - Skills: {', '.join(self.experience.keys())}
+        - Languages: {', '.join(f'{lang}: {level}' for lang, level in self.languages.items())}
+        - Professional Summary: {self.personal_info.get('MessageToManager', '')}
+
+        Resume Content:
+        {self.resume_content}
+        """
+
+    def generate_response(self, question_text, response_type="text", max_tokens=100):
+        """
+        Generate a response using OpenAI's API
+        
+        Args:
+            question_text: The application question to answer
+            response_type: "text" or "numeric"
+            max_tokens: Maximum length of response
+            
+        Returns:
+            Generated response or None if API key not configured
+        """
+        if not self._client:
+            return None
+            
+        try:
+            context = self._build_context()
+            
+            system_prompt = {
+                "text": "You are a helpful assistant answering job application questions professionally and concisely. Use the candidate's background information and resume to personalize responses.",
+                "numeric": "You are a helpful assistant providing numeric answers to job application questions. Based on the candidate's experience, provide a single number as your response. No explanation needed."
+            }[response_type]
+
+            response = self._client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Using this candidate's background and resume:\n{context}\n\nPlease answer this job application question: {question_text}"}
+                ],
+                max_tokens=max_tokens,
+                temperature=0.7
+            )
+            
+            answer = response.choices[0].message.content.strip()
+            print(f"AI response: {answer}")  # TODO: Put logging behind a debug flag
+            
+            if response_type == "numeric":
+                # Extract first number from response
+                import re
+                numbers = re.findall(r'\d+', answer)
+                if numbers:
+                    return int(numbers[0])
+                return 0
+                
+            return answer
+            
+        except Exception as e:
+            print(f"Error using AI to generate response: {str(e)}")
+            return None
 
 class LinkedinEasyApply:
     def __init__(self, parameters, driver):
         self.browser = driver
         self.email = parameters['email']
         self.password = parameters['password']
+        self.openai_api_key = parameters.get('openaiApiKey', '')  # Get API key with empty default
         self.disable_lock = parameters['disableAntiLock']
         self.company_blacklist = parameters.get('companyBlacklist', []) or []
         self.title_blacklist = parameters.get('titleBlacklist', []) or []
@@ -41,6 +131,13 @@ class LinkedinEasyApply:
         self.personal_info = parameters.get('personalInfo', [])
         self.eeo = parameters.get('eeo', [])
         self.experience_default = int(self.experience['default'])
+        self.ai_response_generator = AIResponseGenerator(
+            api_key=self.openai_api_key,
+            personal_info=self.personal_info,
+            experience=self.experience,
+            languages=self.languages,
+            resume_path=self.resume_dir
+        )
 
     def login(self):
         try:
@@ -624,11 +721,20 @@ class LinkedinEasyApply:
                         to_enter = float(self.salary_minimum)
                     self.record_unprepared_question(text_field_type, question_text)
 
+                # Since no response can be determined, we use AI to generate a response if available, falling back to 0 or empty string if the AI response is not available
                 if text_field_type == 'numeric':
                     if not isinstance(to_enter, (int, float)):
-                        to_enter = 0
+                        ai_response = self.ai_response_generator.generate_response(
+                            question_text,
+                            response_type="numeric"
+                        )
+                        to_enter = ai_response if ai_response is not None else 0
                 elif to_enter == '':
-                    to_enter = " ‏‏‎ "
+                    ai_response = self.ai_response_generator.generate_response(
+                        question_text,
+                        response_type="text"
+                    )
+                    to_enter = ai_response if ai_response is not None else " ‏‏‎ "
 
                 self.enter_text(txt_field, to_enter)
                 continue
@@ -977,7 +1083,7 @@ class LinkedinEasyApply:
 
         for i in range(start, end, step):
             self.browser.execute_script("arguments[0].scrollTo(0, {})".format(i), scrollable_element)
-            time.sleep(random.uniform(1.0, 2.6))
+            time.sleep(random.uniform(0.1, .6))
 
     def avoid_lock(self):
         if self.disable_lock:

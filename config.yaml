@@ -2,6 +2,9 @@
 email: email@domain.com
 password: yourpassword
 
+# OpenAI API key for answering application questions when no answer can be determined using the information below. WARNING: KEEP THIS OFFLINE AND DO NOT COMMIT/UPLOAD.
+openaiApiKey: sk-proj-your-openai-api-key
+
 # Anti-lock default is False to prevent your PC from sleeping to allow bot to run uninterrupted.
 # Set it to True if you wish to disable this functionality.
 disableAntiLock: False

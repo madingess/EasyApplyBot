@@ -21,8 +21,7 @@ This Python and Selenium-based bot automates applying to jobs using the Easy App
 2. Install python3 and pip3 on your system. Then, install the required dependencies using the following commands: (Unix commands)
 ```bash
 sudo apt-get install python3
-python3 -m pip install webdriver-manager --upgrade
-python3 -m pip install packaging
+python3 -m pip install -r requirements.txt
 ```
 
 3. Run the bot with python
