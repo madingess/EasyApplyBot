@@ -235,3 +235,9 @@ eeo:
  disability: None
  citizenship: yes
  clearance: no
+
+# Evaluate job fit for each job posting using OpenAI, if OpenAI API Key is configured.
+evaluateJobFit: True
+
+# Debugging mode, used to print more information to the console and fetch more information in AI responses
+debug: False

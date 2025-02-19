@@ -13,14 +13,14 @@ from pypdf import PdfReader
 from openai import OpenAI
 
 class AIResponseGenerator:
-    def __init__(self, api_key, personal_info, experience, languages, resume_path):
+    def __init__(self, api_key, personal_info, experience, languages, resume_path, debug=False):
         self.personal_info = personal_info
         self.experience = experience
         self.languages = languages
         self.resume_path = resume_path
         self._resume_content = None
         self._client = OpenAI(api_key=api_key) if api_key else None
-
+        self.debug = debug
     @property
     def resume_content(self):
         if self._resume_content is None:
@@ -44,7 +44,7 @@ class AIResponseGenerator:
         - Languages: {', '.join(f'{lang}: {level}' for lang, level in self.languages.items())}
         - Professional Summary: {self.personal_info.get('MessageToManager', '')}
 
-        Resume Content:
+        Resume Content (Give the greatest weight to this information, if specified):
         {self.resume_content}
         """
 
@@ -115,6 +115,66 @@ class AIResponseGenerator:
             print(f"Error using AI to generate response: {str(e)}")
             return None
 
+    def evaluate_job_fit(self, job_title, job_description):
+        """
+        Evaluate whether a job is worth applying to based on the candidate's experience and the job requirements
+        
+        Args:
+            job_title: The title of the job posting
+            job_description: The full job description text
+            
+        Returns:
+            bool: True if should apply, False if should skip
+        """
+        if not self._client:
+            return True  # Proceed with application if AI not available
+            
+        try:
+            context = self._build_context()
+            
+            system_prompt = """You are evaluating job fit for technical roles. 
+            Recommend APPLY if:
+            - Candidate meets 60 percent of the core requirements
+            - Experience gap is 3 years or less
+            - Has relevant transferable skills
+            
+            Return SKIP if:
+            - Experience gap is greater than 3 years
+            - Missing multiple core requirements
+            - Role is clearly more senior
+
+            If the candidate is missing a required skill, but the experience required is two or fewer years, ignore the requirement.
+            Consider the candidate's education level when evaluating whether they meet the core requirements.
+            
+            """
+            if self.debug:
+                system_prompt += """
+                You are in debug mode. Return a detailed explanation of your reasoning for each requirement.
+
+                Return APPLY or SKIP followed by a brief explanation.
+
+                Format response as: APPLY/SKIP: [brief reason]"""
+            else:
+                system_prompt += """Return only APPLY or SKIP."""
+
+            response = self._client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Job: {job_title}\n{job_description}\n\nCandidate:\n{context}"}
+                ],
+                max_tokens=250 if self.debug else 1,  # Allow more tokens when debug is enabled
+                temperature=0.3  # Lower temperature for more consistent decisions
+            )
+            
+            answer = response.choices[0].message.content.strip()
+            print(f"AI evaluation: {answer}")
+            return answer.upper().startswith('A')  # True for APPLY, False for SKIP
+            
+        except Exception as e:
+            print(f"Error evaluating job fit: {str(e)}")
+            return True  # Proceed with application if evaluation fails
+
 class LinkedinEasyApply:
     def __init__(self, parameters, driver):
         self.browser = driver
@@ -147,12 +207,15 @@ class LinkedinEasyApply:
         self.personal_info = parameters.get('personalInfo', [])
         self.eeo = parameters.get('eeo', [])
         self.experience_default = int(self.experience['default'])
+        self.debug = parameters.get('debug', False)
+        self.evaluate_job_fit = parameters.get('evaluateJobFit', True)
         self.ai_response_generator = AIResponseGenerator(
             api_key=self.openai_api_key,
             personal_info=self.personal_info,
             experience=self.experience,
             languages=self.languages,
-            resume_path=self.resume_dir
+            resume_path=self.resume_dir,
+            debug=self.debug
         )
 
     def login(self):
@@ -371,8 +434,8 @@ class LinkedinEasyApply:
             if company.lower() not in [word.lower() for word in self.company_blacklist] and \
                     poster.lower() not in [word.lower() for word in self.poster_blacklist] and \
                     contains_blacklisted_keywords is False and link not in self.seen_jobs:
-                    # TODO Add filtering here to ask AI if the job is worth applying to, considering the limited number of daily applications available
                 try:
+                    # Click the job to load description
                     max_retries = 3
                     retries = 0
                     while retries < max_retries:
@@ -381,12 +444,25 @@ class LinkedinEasyApply:
                             job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                             job_el.click()
                             break
-
                         except StaleElementReferenceException:
                             retries += 1
                             continue
 
                     time.sleep(random.uniform(3, 5))
+
+                    if self.evaluate_job_fit:
+                        try:
+                            # Get job description
+                            job_description = self.browser.find_element(
+                                By.ID, 'job-details'
+                            ).text  
+
+                            # Evaluate if we should apply
+                            if not self.ai_response_generator.evaluate_job_fit(job_title, job_description):
+                                print("Skipping application: Job requirements not aligned with candidate profile per AI evaluation.")
+                                continue
+                        except:
+                            print("Could not load job description")
 
                     try:
                         done_applying = self.apply_to_job()
@@ -429,7 +505,7 @@ class LinkedinEasyApply:
             return False
 
         try:
-            job_description_area = self.browser.find_element(By.CLASS_NAME, "jobs-search__job-details--container")
+            job_description_area = self.browser.find_element(By.ID, "job-details")
             print (f"{job_description_area}")
             self.scroll_slow(job_description_area, end=1600)
             self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
