@@ -3,3 +3,7 @@ outputRemote.csv
 unprepared_questions.csv
 .idea/
 **/__pycache__/
+chrome_bot/
+.vscode/
+failed.csv
+output.csv
