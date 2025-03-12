@@ -13,23 +13,36 @@ from pypdf import PdfReader
 from openai import OpenAI
 
 class AIResponseGenerator:
-    def __init__(self, api_key, personal_info, experience, languages, resume_path, debug=False):
+    def __init__(self, api_key, personal_info, experience, languages, resume_path, text_resume_path=None, debug=False):
         self.personal_info = personal_info
         self.experience = experience
         self.languages = languages
-        self.resume_path = resume_path
+        self.pdf_resume_path = resume_path
+        self.text_resume_path = text_resume_path
         self._resume_content = None
         self._client = OpenAI(api_key=api_key) if api_key else None
         self.debug = debug
     @property
     def resume_content(self):
         if self._resume_content is None:
+            # First try to read from text resume if available
+            if self.text_resume_path:
+                try:
+                    with open(self.text_resume_path, 'r', encoding='utf-8') as f:
+                        self._resume_content = f.read()
+                        print("Successfully loaded text resume")
+                        return self._resume_content
+                except Exception as e:
+                    print(f"Could not read text resume: {str(e)}")
+
+            # Fall back to PDF resume if text resume fails or isn't available
             try:
                 content = []
-                reader = PdfReader(self.resume_path)
+                reader = PdfReader(self.pdf_resume_path)
                 for page in reader.pages:
                     content.append(page.extract_text())
                 self._resume_content = "\n".join(content)
+                print("Successfully loaded PDF resume")
             except Exception as e:
                 print(f"Could not extract text from resume PDF: {str(e)}")
                 self._resume_content = ""
@@ -134,19 +147,20 @@ class AIResponseGenerator:
             
             system_prompt = """You are evaluating job fit for technical roles. 
             Recommend APPLY if:
-            - Candidate meets 60 percent of the core requirements
-            - Experience gap is 3 years or less
+            - Candidate meets 65 percent of the core requirements
+            - Experience gap is 2 years or less
             - Has relevant transferable skills
             
             Return SKIP if:
-            - Experience gap is greater than 3 years
+            - Experience gap is greater than 2 years
             - Missing multiple core requirements
             - Role is clearly more senior
+            - The role is focused on an uncommon technology or skill that is required and that the candidate does not have experience with
+            - The role is a leadership role or a role that requires managing people and the candidate has no experience leading or managing people
 
-            If the candidate is missing a required skill, but the experience required is two or fewer years, ignore the requirement.
-            Consider the candidate's education level when evaluating whether they meet the core requirements.
-            
             """
+            #Consider the candidate's education level when evaluating whether they meet the core requirements. Having higher education than required should allow for greater flexibility in the required experience.
+            
             if self.debug:
                 system_prompt += """
                 You are in debug mode. Return a detailed explanation of your reasoning for each requirement.
@@ -164,7 +178,7 @@ class AIResponseGenerator:
                     {"role": "user", "content": f"Job: {job_title}\n{job_description}\n\nCandidate:\n{context}"}
                 ],
                 max_tokens=250 if self.debug else 1,  # Allow more tokens when debug is enabled
-                temperature=0.3  # Lower temperature for more consistent decisions
+                temperature=0.2  # Lower temperature for more consistent decisions
             )
             
             answer = response.choices[0].message.content.strip()
@@ -194,6 +208,7 @@ class LinkedinEasyApply:
         self.unprepared_questions_file_name = "unprepared_questions"
         self.output_file_directory = parameters['outputFileDirectory']
         self.resume_dir = parameters['uploads']['resume']
+        self.text_resume = parameters.get('textResume', '')
         if 'coverLetter' in parameters['uploads']:
             self.cover_letter_dir = parameters['uploads']['coverLetter']
         else:
@@ -215,6 +230,7 @@ class LinkedinEasyApply:
             experience=self.experience,
             languages=self.languages,
             resume_path=self.resume_dir,
+            text_resume_path=self.text_resume,
             debug=self.debug
         )
 
@@ -271,7 +287,7 @@ class LinkedinEasyApply:
         random.shuffle(searches)
 
         page_sleep = 0
-        minimum_time = 60 * 15  # minimum time bot should run before taking a break
+        minimum_time = 60 * 2  # minimum time bot should run before taking a break
         minimum_page_time = time.time() + minimum_time
 
         for (position, location) in searches:
@@ -449,6 +465,10 @@ class LinkedinEasyApply:
                             continue
 
                     time.sleep(random.uniform(3, 5))
+
+                    # TODO: Check if the job is already applied or the application has been reached
+                    # "You’ve reached the Easy Apply application limit for today. Save this job and come back tomorrow to continue applying."
+                    # Do this before evaluating job fit to save on API calls
 
                     if self.evaluate_job_fit:
                         try:

@@ -237,7 +237,10 @@ eeo:
  clearance: no
 
 # Evaluate job fit for each job posting using OpenAI, if OpenAI API Key is configured.
-evaluateJobFit: True
+evaluateJobFit: False
+
+# Path to the text version of your resume, used to extract text from the resume for AI evaluation of job fit, used if OpenAI API Key is configured and evaluateJobFit is True.
+textResume: /home/michael/Documents/Applications/Resume/resume_export.txt
 
 # Debugging mode, used to print more information to the console and fetch more information in AI responses
 debug: False
